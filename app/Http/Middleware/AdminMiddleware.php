@@ -5,19 +5,28 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AdminMiddleware
 {
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
+     */
     public function handle(Request $request, Closure $next)
     {
-        if (!Auth::check()) {
-            return redirect()->route('login');
+        if (Auth::check() && Auth::user()->isAdmin()) {
+            return $next($request);
         }
 
-        if (!Auth::user()->is_admin) {
-            return redirect()->route('user.dashboard')->with('error', 'Access denied. Admin privileges required.');
-        }
+        Log::warning('Non-admin attempted to access admin route', [
+            'user_id' => Auth::id() ?? 'guest',
+            'path' => $request->path()
+        ]);
 
-        return $next($request);
+        return redirect()->route('user.dashboard');
     }
 }

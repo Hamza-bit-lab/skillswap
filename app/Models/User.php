@@ -6,10 +6,13 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
+
+
 
     /**
      * The attributes that are mass assignable.
@@ -23,7 +26,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'username',
         'bio',
         'location',
-        'avatar',
         'phone',
         'website',
         'linkedin',
@@ -47,6 +49,14 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'remember_token',
     ];
+
+    /**
+     * Get the portfolio items for the user.
+     */
+    public function portfolioItems()
+    {
+        return $this->hasMany(PortfolioItem::class);
+    }
 
     /**
      * Check if the user is an admin

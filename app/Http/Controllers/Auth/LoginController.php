@@ -11,28 +11,30 @@ class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
-    // Remove the fixed redirectTo property since we handle it in authenticated method
-    // protected $redirectTo = '/redirect';
-
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
     }
 
-    // Override authenticated method for role-based redirect
+    /**
+     * Handle post-login redirection.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return \Illuminate\Http\RedirectResponse
+     */
     protected function authenticated(Request $request, $user)
     {
-        Log::info('LoginController@authenticated called', [
+        Log::info('LoginController@authenticated: Processing post-login redirect', [
             'user_id' => $user->id,
-            'is_admin' => $user->is_admin,
+            'is_admin' => $user->isAdmin(),
         ]);
 
-        // Role-based redirect after successful login
-        if ($user->is_admin) {
+        if ($user->isAdmin()) {
             Log::info('LoginController: Redirecting admin to admin.dashboard');
             return redirect()->route('admin.dashboard');
         } else {
-            Log::info('LoginController: Redirecting normal user to user.dashboard');
+            Log::info('LoginController: Redirecting non-admin to user.dashboard');
             return redirect()->route('user.dashboard');
         }
     }

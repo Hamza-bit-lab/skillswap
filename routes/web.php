@@ -13,7 +13,7 @@ use App\Http\Controllers\OtpVerificationController;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register web routes for your application. These
-| routes are loaded by theRouteServiceProvider and all of them will
+| routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "web" middleware group. Make something great!
 |
 */
@@ -48,7 +48,9 @@ Route::post('logout', [App\Http\Controllers\Auth\LoginController::class, 'logout
     ->name('logout')
     ->middleware('auth');
 
-// Password Reset Routes (using guest middleware for consistency)
+    
+
+// Password Reset Routes
 Route::middleware(['guest'])->group(function () {
     Route::get('password/reset', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
     Route::post('password/email', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
@@ -65,52 +67,60 @@ Route::middleware('auth')->group(function () {
 });
 
 // Post-login redirect
-Route::get('/redirect', [RedirectController::class, 'afterLogin'])->name('redirect');
+Route::get('/redirect', [RedirectController::class, 'afterLogin'])->name('redirect')->middleware('auth');
 
 // User Routes (Regular users only)
 Route::middleware(['auth'])->group(function () {
-    
-    // User Dashboard Routes
     Route::prefix('dashboard')->group(function () {
         Route::get('/', function () {
+            // Redirect admins to admin dashboard
+            if (auth()->check() && auth()->user()->isAdmin()) {
+                return redirect()->route('admin.dashboard');
+            }
             return view('user-side.dashboard');
         })->name('user.dashboard');
-        
+
         Route::get('/exchanges', function () {
             return view('user-side.exchanges');
         })->name('user.exchanges');
+
+        // Profile Routes
+        Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'show'])->name('user.profile');
+        Route::get('/profile/edit', [App\Http\Controllers\ProfileController::class, 'edit'])->name('user.profile.edit');
+        Route::put('/profile/update', [App\Http\Controllers\ProfileController::class, 'update'])->name('user.profile.update');
         
-        Route::get('/profile', function () {
-            return view('user-side.profile');
-        })->name('user.profile');
+        // Skills Routes
+        Route::post('/profile/skills', [App\Http\Controllers\ProfileController::class, 'addSkill'])->name('user.skills.add');
+        Route::put('/profile/skills/{skill}', [App\Http\Controllers\ProfileController::class, 'updateSkill'])->name('user.skills.update');
+        Route::delete('/profile/skills/{skill}', [App\Http\Controllers\ProfileController::class, 'deleteSkill'])->name('user.skills.delete');
         
+        // Portfolio Routes
+        Route::post('/profile/portfolio', [App\Http\Controllers\ProfileController::class, 'addPortfolioItem'])->name('user.portfolio.add');
+        Route::delete('/profile/portfolio/{id}', [App\Http\Controllers\ProfileController::class, 'deletePortfolioItem'])->name('user.portfolio.delete');
+
         Route::get('/messages', function () {
             return view('user-side.messages');
         })->name('user.messages');
-        
+
         Route::get('/skills', function () {
             return view('user-side.skills');
         })->name('user.skills');
     });
-    
+
     // Admin Routes
     Route::prefix('admin')->middleware('admin')->group(function () {
-        Route::get('/', function () {
-            return view('admin-side.dashboard');
-        })->name('admin.dashboard');
-        
         Route::get('/dashboard', function () {
             return view('admin-side.dashboard');
         })->name('admin.dashboard');
-        
+
         Route::get('/users', function () {
             return view('admin-side.users');
         })->name('admin.users');
-        
+
         Route::get('/exchanges', function () {
             return view('admin-side.exchanges');
         })->name('admin.exchanges');
-        
+
         Route::get('/reports', function () {
             return view('admin-side.reports');
         })->name('admin.reports');
@@ -119,14 +129,9 @@ Route::middleware(['auth'])->group(function () {
 
 // Redirect old routes to new structure
 Route::get('/home', function () {
-    return redirect()->route('user.dashboard');
-});
+    return redirect()->route(auth()->check() && auth()->user()->isAdmin() ? 'admin.dashboard' : 'user.dashboard');
+})->middleware('auth');
 
-Route::get('/admin', function () {
-    return redirect()->route('admin.dashboard');
-});
-
-// Handle any remaining home route conflicts
 Route::get('/user/home', function () {
     return redirect()->route('user.dashboard');
-});
+})->middleware('auth');

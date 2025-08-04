@@ -9,6 +9,14 @@ use Illuminate\Support\Facades\Log;
 
 class RedirectIfAuthenticated
 {
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @param  string|null  ...$guards
+     * @return mixed
+     */
     public function handle(Request $request, Closure $next, ...$guards)
     {
         $guards = empty($guards) ? [null] : $guards;
@@ -16,28 +24,35 @@ class RedirectIfAuthenticated
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
                 $user = Auth::user();
-                
-                // Get the intended URL
                 $intendedUrl = $request->path();
-                
-                // Check if admin trying to access user routes
-                if ($user && $user->is_admin == 1 && str_starts_with($intendedUrl, 'dashboard')) {
+
+                // Log user details for debugging
+                Log::info('RedirectIfAuthenticated: Processing authenticated user', [
+                    'user_id' => $user->id,
+                    'is_admin' => $user->isAdmin(),
+                    'intended_url' => $intendedUrl
+                ]);
+
+                // Redirect admins away from user dashboard
+                if ($user->isAdmin() && ($intendedUrl === 'dashboard' || str_starts_with($intendedUrl, 'dashboard'))) {
                     Log::info('Admin attempting to access user dashboard - redirecting to admin dashboard');
                     return redirect()->route('admin.dashboard');
                 }
-                
-                // Check if non-admin trying to access admin routes
-                if ($user && $user->is_admin == 0 && str_starts_with($intendedUrl, 'admin')) {
-                    Log::info('User attempting to access admin area - redirecting to user dashboard');
+
+                // Redirect non-admins away from admin routes
+                if (!$user->isAdmin() && str_starts_with($intendedUrl, 'admin')) {
+                    Log::info('Non-admin attempting to access admin area - redirecting to user dashboard');
                     return redirect()->route('user.dashboard');
                 }
-                
-                // If they're logged in but hitting login/register pages
+
+                // Redirect authenticated users away from login/register pages
                 if (str_contains($intendedUrl, 'login') || str_contains($intendedUrl, 'register')) {
                     Log::info('Authenticated user attempting to access auth pages');
-                    if ($user->is_admin == 1) {
+                    if ($user->isAdmin()) {
+                        Log::info('Redirecting admin to admin.dashboard');
                         return redirect()->route('admin.dashboard');
                     } else {
+                        Log::info('Redirecting non-admin to user.dashboard');
                         return redirect()->route('user.dashboard');
                     }
                 }

@@ -1413,6 +1413,20 @@ body {
     color: #dc3545;
 }
 
+
+
+/* Adjustments for profileDropdown */
+#profileDropdown {
+    margin-left: 10px;
+    padding: 10px;
+}
+
+#profileDropdown .dropdown-menu {
+    padding: 15px;
+    margin-top: 10px;
+    border-radius: 8px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .main-container {
@@ -1555,4 +1569,4 @@ body {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-} 
+}

@@ -17,26 +17,7 @@
 
 <body>
 
-<!-- Admin Header -->
-<header class="main-header">
-    <div class="container">
-        <nav class="navbar navbar-expand-lg main-nav px-0">
-            <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
-                <i class="fa fa-exchange"></i> SkillSwap Admin
-            </a>
-            <div class="navbar-nav ml-auto">
-                <a href="{{ route('admin.dashboard') }}" class="nav-link">Dashboard</a>
-                <a href="#" class="nav-link">Users</a>
-                <a href="#" class="nav-link">Exchanges</a>
-                <a href="#" class="nav-link">Reports</a>
-                <a href="#" class="nav-link">Settings</a>
-            </div>
-            <div class="user-menu">
-                <button class="btn btn-outline-primary btn-sm">Logout</button>
-            </div>
-        </nav>
-    </div>
-</header>
+
 
 <!-- Main Content -->
 <div class="container mt-5 pt-5">

@@ -15,8 +15,7 @@ return new class extends Migration
             $table->string('username')->unique()->nullable()->after('name');
             $table->text('bio')->nullable()->after('email');
             $table->string('location')->nullable()->after('bio');
-            $table->string('avatar')->nullable()->after('location');
-            $table->string('phone')->nullable()->after('avatar');
+            $table->string('phone')->nullable()->after('location');
             $table->string('website')->nullable()->after('phone');
             $table->string('linkedin')->nullable()->after('website');
             $table->string('github')->nullable()->after('linkedin');
@@ -41,7 +40,7 @@ return new class extends Migration
                 'username',
                 'bio',
                 'location',
-                'avatar',
+
                 'phone',
                 'website',
                 'linkedin',

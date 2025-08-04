@@ -31,9 +31,13 @@
                 <a href="#" class="nav-link">Reports</a>
                 <a href="#" class="nav-link">Settings</a>
             </div>
-            <div class="user-menu">
-                <button class="btn btn-outline-primary btn-sm">Logout</button>
-            </div>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                        <a class="dropdown-item" href="{{ route('logout') }}" 
+                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <i class="fa fa-sign-out"></i> Logout
+                        </a>
         </nav>
     </div>
 </header>
@@ -43,7 +47,6 @@
     <div class="row">
         <div class="col-12">
             <h1>Admin Dashboard</h1>
-            {{Auth::user()->is_admin}}  
             <p>Welcome to SkillSwap Admin Panel</p>
         </div>
     </div>
