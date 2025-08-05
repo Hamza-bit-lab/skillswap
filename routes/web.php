@@ -80,14 +80,28 @@ Route::middleware(['auth'])->group(function () {
             return view('user-side.dashboard');
         })->name('user.dashboard');
 
-        Route::get('/exchanges', function () {
-            return view('user-side.exchanges');
-        })->name('user.exchanges');
+        // Exchange Routes
+        Route::prefix('exchanges')->group(function () {
+            Route::get('/', [App\Http\Controllers\ExchangeController::class, 'index'])->name('user.exchanges.discover');
+            Route::get('/skill/{id}', [App\Http\Controllers\SkillController::class, 'showSkill'])->name('user.exchanges.skill-details');
+            Route::get('/create', [App\Http\Controllers\ExchangeController::class, 'create'])->name('user.exchanges.create');
+            Route::post('/', [App\Http\Controllers\ExchangeController::class, 'store'])->name('user.exchanges.store');
+            Route::get('/my-exchanges', [App\Http\Controllers\ExchangeController::class, 'myExchanges'])->name('user.exchanges.my-exchanges');
+            Route::get('/{id}', [App\Http\Controllers\ExchangeController::class, 'show'])->name('user.exchanges.show');
+            Route::post('/{id}/accept', [App\Http\Controllers\ExchangeController::class, 'accept'])->name('user.exchanges.accept');
+            Route::post('/{id}/reject', [App\Http\Controllers\ExchangeController::class, 'reject'])->name('user.exchanges.reject');
+            Route::post('/{id}/complete', [App\Http\Controllers\ExchangeController::class, 'complete'])->name('user.exchanges.complete');
+            Route::post('/{id}/cancel', [App\Http\Controllers\ExchangeController::class, 'cancel'])->name('user.exchanges.cancel');
+            Route::post('/{id}/message', [App\Http\Controllers\ExchangeController::class, 'sendMessage'])->name('user.exchanges.message');
+            Route::get('/search', [App\Http\Controllers\ExchangeController::class, 'search'])->name('user.exchanges.search');
+            Route::get('/recommendations', [App\Http\Controllers\ExchangeController::class, 'getRecommendations'])->name('user.exchanges.recommendations');
+        });
 
         // Profile Routes
         Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'show'])->name('user.profile');
         Route::get('/profile/edit', [App\Http\Controllers\ProfileController::class, 'edit'])->name('user.profile.edit');
         Route::put('/profile/update', [App\Http\Controllers\ProfileController::class, 'update'])->name('user.profile.update');
+        Route::post('/profile/avatar', [App\Http\Controllers\ProfileController::class, 'updateAvatar'])->name('user.profile.avatar');
         
         // Skills Routes
         Route::post('/profile/skills', [App\Http\Controllers\ProfileController::class, 'addSkill'])->name('user.skills.add');
@@ -105,6 +119,26 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/skills', function () {
             return view('user-side.skills');
         })->name('user.skills');
+        
+        // My Exchanges Page
+        Route::get('/my-exchanges', function () {
+            return view('user-side.my-exchanges');
+        })->name('user.my-exchanges');
+        
+        // My Skills Page
+        Route::get('/my-skills', function () {
+            return view('user-side.my-skills');
+        })->name('user.my-skills');
+        
+        // Favorites Page
+        Route::get('/favorites', function () {
+            return view('user-side.favorites');
+        })->name('user.favorites');
+        
+        // Settings Page
+        Route::get('/settings', function () {
+            return view('user-side.settings');
+        })->name('user.settings');
     });
 
     // Admin Routes

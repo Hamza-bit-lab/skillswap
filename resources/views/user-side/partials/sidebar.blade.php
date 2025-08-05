@@ -8,12 +8,9 @@
         <div class="sidebar-section">
             <h6><i class="fa fa-search"></i> Find Skills</h6>
             <ul class="sidebar-menu">
-                <li><a href="#"><i class="fa fa-code"></i> Development</a></li>
-                <li><a href="#"><i class="fa fa-paint-brush"></i> Design</a></li>
-                <li><a href="#"><i class="fa fa-bullhorn"></i> Marketing</a></li>
-                <li><a href="#"><i class="fa fa-pencil"></i> Writing</a></li>
-                <li><a href="#"><i class="fa fa-camera"></i> Photography</a></li>
-                <li><a href="#"><i class="fa fa-video-camera"></i> Video</a></li>
+                <li><a href="{{ route('user.exchanges.discover') }}"><i class="fa fa-search"></i> Discover Skills</a></li>
+                <li><a href="{{ route('user.exchanges.search') }}"><i class="fa fa-filter"></i> Advanced Search</a></li>
+                <li><a href="{{ route('user.exchanges.recommendations') }}"><i class="fa fa-lightbulb"></i> Recommendations</a></li>
             </ul>
         </div>
         
@@ -29,9 +26,10 @@
         <div class="sidebar-section">
             <h6><i class="fa fa-exchange"></i> My Exchanges</h6>
             <ul class="sidebar-menu">
-                <li><a href="#"><i class="fa fa-clock-o"></i> Pending (2)</a></li>
-                <li><a href="#"><i class="fa fa-check"></i> Active (1)</a></li>
-                <li><a href="#"><i class="fa fa-check-circle"></i> Completed (5)</a></li>
+                <li><a href="{{ route('user.exchanges.my-exchanges') }}"><i class="fa fa-list"></i> All Exchanges</a></li>
+                <li><a href="{{ route('user.exchanges.my-exchanges', ['status' => 'pending']) }}"><i class="fa fa-clock-o"></i> Pending</a></li>
+                <li><a href="{{ route('user.exchanges.my-exchanges', ['status' => 'in_progress']) }}"><i class="fa fa-play"></i> In Progress</a></li>
+                <li><a href="{{ route('user.exchanges.my-exchanges', ['status' => 'completed']) }}"><i class="fa fa-check-circle"></i> Completed</a></li>
             </ul>
         </div>
         

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Skill;
+use App\Services\AvatarService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,12 @@ use Illuminate\Support\Facades\Log;
 
 class RegistrationWizardController extends Controller
 {
+    protected $avatarService;
+
+    public function __construct(AvatarService $avatarService)
+    {
+        $this->avatarService = $avatarService;
+    }
     /**
      * Show the first step of registration (personal info)
      */
@@ -36,15 +43,38 @@ class RegistrationWizardController extends Controller
             'phone' => 'nullable|string|max:20',
             'location' => 'nullable|string|max:255',
             'bio' => 'nullable|string|max:1000',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:3072',
         ], [
             'username.regex' => 'Username can only contain letters, numbers, and underscores.',
             'username.unique' => 'This username is already taken.',
             'email.unique' => 'This email is already registered.',
+            'avatar.image' => 'Avatar must be an image file.',
+            'avatar.mimes' => 'Avatar must be a JPEG or PNG image.',
+            'avatar.max' => 'Avatar file size must be less than 3MB.',
         ]);
+
+        $step1Data = $request->only(['name', 'email', 'password', 'username', 'phone', 'location', 'bio']);
+
+        // Handle avatar upload if provided
+        if ($request->hasFile('avatar')) {
+            try {
+                // Validate avatar using service
+                $validationErrors = $this->avatarService->validateAvatar($request->file('avatar'));
+                if (!empty($validationErrors)) {
+                    return back()->withErrors(['avatar' => implode(' ', $validationErrors)])->withInput();
+                }
+
+                // Upload avatar
+                $avatarPath = $this->avatarService->uploadAvatar($request->file('avatar'));
+                $step1Data['avatar'] = $avatarPath;
+            } catch (\Exception $e) {
+                return back()->withErrors(['avatar' => 'Failed to upload avatar. Please try again.'])->withInput();
+            }
+        }
 
         // Store in session for now
         $request->session()->put('registration_data', [
-            'step1' => $request->only(['name', 'email', 'password', 'username', 'phone', 'location', 'bio'])
+            'step1' => $step1Data
         ]);
 
         return redirect()->route('register.step2');
@@ -165,6 +195,7 @@ class RegistrationWizardController extends Controller
             $userData['bio'] = $userData['bio'] ?? '';
             $userData['location'] = $userData['location'] ?? '';
             $userData['phone'] = $userData['phone'] ?? '';
+            $userData['avatar'] = $userData['avatar'] ?? null;
             $userData['website'] = $registrationData['step3']['website'] ?? '';
             $userData['linkedin'] = $registrationData['step3']['linkedin'] ?? '';
             $userData['github'] = $registrationData['step3']['github'] ?? '';

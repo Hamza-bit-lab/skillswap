@@ -131,17 +131,17 @@
                         <a class="dropdown-item" href="{{ route('user.profile') }}" style="padding: 8px 12px; margin: 5px 0; display: flex; align-items: center; overflow-wrap: break-word; white-space: normal;">
                             <i class="fa fa-user" style="margin-right: 8px;"></i> My Profile
                         </a>
-                        <a class="dropdown-item" href="#" style="padding: 8px 12px; margin: 5px 0; display: flex; align-items: center; overflow-wrap: break-word; white-space: normal;">
+                        <a class="dropdown-item" href="{{ route('user.my-exchanges') }}" style="padding: 8px 12px; margin: 5px 0; display: flex; align-items: center; overflow-wrap: break-word; white-space: normal;">
                             <i class="fa fa-exchange" style="margin-right: 8px;"></i> My Exchanges
                         </a>
-                        <a class="dropdown-item" href="#" style="padding: 8px 12px; margin: 5px 0; display: flex; align-items: center; overflow-wrap: break-word; white-space: normal;">
+                        <a class="dropdown-item" href="{{ route('user.my-skills') }}" style="padding: 8px 12px; margin: 5px 0; display: flex; align-items: center; overflow-wrap: break-word; white-space: normal;">
                             <i class="fa fa-star" style="margin-right: 8px;"></i> My Skills
                         </a>
-                        <a class="dropdown-item" href="#" style="padding: 8px 12px; margin: 5px 0; display: flex; align-items: center; overflow-wrap: break-word; white-space: normal;">
+                        <a class="dropdown-item" href="{{ route('user.favorites') }}" style="padding: 8px 12px; margin: 5px 0; display: flex; align-items: center; overflow-wrap: break-word; white-space: normal;">
                             <i class="fa fa-heart" style="margin-right: 8px;"></i> Favorites
                         </a>
                         <div class="dropdown-divider" style="margin: 8px 0;"></div>
-                        <a class="dropdown-item" href="#" style="padding: 8px 12px; margin: 5px 0; display: flex; align-items: center; overflow-wrap: break-word; white-space: normal;">
+                        <a class="dropdown-item" href="{{ route('user.settings') }}" style="padding: 8px 12px; margin: 5px 0; display: flex; align-items: center; overflow-wrap: break-word; white-space: normal;">
                             <i class="fa fa-cog" style="margin-right: 8px;"></i> Settings
                         </a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

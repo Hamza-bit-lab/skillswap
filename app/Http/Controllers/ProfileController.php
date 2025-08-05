@@ -8,6 +8,7 @@ use App\Models\Skill;
 use App\Services\AvatarService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class ProfileController extends Controller
 {
@@ -16,18 +17,23 @@ class ProfileController extends Controller
     /**
      * Constructor to inject dependencies and apply middleware.
      */
-  
+    public function __construct(AvatarService $avatarService)
+    {
+        $this->avatarService = $avatarService;
+    }
 
     /**
      * Display the user's profile.
      */
     public function show()
     {
+        
         $user = Auth::user();
         $skills = $user->skills()->get();
         $exchanges = $user->exchanges()->with(['skill', 'partner'])->latest()->get();
         $reviews = $user->receivedReviews()->with('reviewer')->latest()->get();
         $portfolioItems = $user->portfolioItems()->latest()->get();
+      
 
         return view('user-side.profile', compact('user', 'skills', 'exchanges', 'reviews', 'portfolioItems'));
     }
@@ -81,19 +87,32 @@ class ProfileController extends Controller
      */
     public function updateAvatar(Request $request)
     {
-        $request->validate([
-            'avatar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
-
-        $user = Auth::user();
-
         try {
+            $request->validate([
+                'avatar' => 'required|image|mimes:jpeg,png,jpg|max:3072',
+            ]);
+
+            $user = Auth::user();
+
             if ($request->hasFile('avatar')) {
-                // Delete old avatar
-                $this->avatarService->deleteOldAvatar($user->avatar);
+                $file = $request->file('avatar');
+                
+                // Validate avatar using service
+                $validationErrors = $this->avatarService->validateAvatar($file);
+                if (!empty($validationErrors)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => implode(' ', $validationErrors),
+                    ], 400);
+                }
+
+                // Delete old avatar if exists
+                if ($user->avatar) {
+                    $this->avatarService->deleteOldAvatar($user->avatar);
+                }
 
                 // Upload new avatar
-                $path = $this->avatarService->uploadAvatar($request->file('avatar'));
+                $path = $this->avatarService->uploadAvatar($file);
 
                 // Update user record
                 $user->avatar = $path;
@@ -110,7 +129,22 @@ class ProfileController extends Controller
                 'success' => false,
                 'message' => 'No avatar file provided.',
             ], 400);
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed: ' . implode(', ', $e->validator->errors()->all()),
+            ], 422);
         } catch (\Exception $e) {
+            \Log::error('Avatar upload failed: ' . $e->getMessage(), [
+                'user_id' => Auth::id(),
+                'file_info' => $request->hasFile('avatar') ? [
+                    'name' => $request->file('avatar')->getClientOriginalName(),
+                    'size' => $request->file('avatar')->getSize(),
+                    'mime' => $request->file('avatar')->getMimeType(),
+                ] : 'No file'
+            ]);
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update avatar: ' . $e->getMessage(),
@@ -125,21 +159,25 @@ class ProfileController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'level' => 'required|in:Beginner,Intermediate,Advanced,Expert',
+            'category' => 'required|string|max:255',
+            'level' => 'required|in:beginner,intermediate,advanced,expert',
             'description' => 'nullable|string|max:1000',
+            'experience_years' => 'nullable|integer|min:0|max:50',
         ]);
-
+    
         $skill = Auth::user()->skills()->create([
             'name' => $request->name,
-            'level' => $request->level,
+            'category' => $request->category,
+            'level' => ucfirst($request->level),
             'description' => $request->description,
+            'experience_years' => $request->experience_years,
         ]);
-
-        return response()->json([
-            'success' => true,
-            'skill' => $skill,
-        ]);
+    
+        return redirect()->back()->with('success', 'Skill added successfully!');
     }
+    
+    
+
 
     /**
      * Update an existing skill.
@@ -150,14 +188,23 @@ class ProfileController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
             'level' => 'required|in:Beginner,Intermediate,Advanced,Expert',
             'description' => 'nullable|string|max:1000',
+            'experience_years' => 'nullable|integer|min:0|max:50',
         ]);
 
-        $skill->update($request->only(['name', 'level', 'description']));
+        $skill->update([
+            'name' => $request->name,
+            'category' => $request->category,
+            'level' => $request->level,
+            'description' => $request->description,
+            'experience_years' => $request->experience_years,
+        ]);
 
         return response()->json([
             'success' => true,
+            'message' => 'Skill updated successfully!',
             'skill' => $skill,
         ]);
     }
