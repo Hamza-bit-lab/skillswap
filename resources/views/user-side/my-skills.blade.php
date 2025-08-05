@@ -157,7 +157,7 @@
                             <button class="btn btn-outline-primary btn-sm" onclick="viewSkill({{ $skill->id }})">
                                 <i class="fa fa-eye"></i> View
                             </button>
-                            <button class="btn btn-outline-danger btn-sm" onclick="deleteSkill({{ $skill->id }})">
+                            <button class="btn btn-outline-danger btn-sm" onclick="deleteSkill({{ $skill->id }}, '{{ $skill->name }}')">
                                 <i class="fa fa-trash"></i> Delete
                             </button>
                         </div>
@@ -197,7 +197,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('user.skills.add') }}" method="POST">
+            <form action="{{ route('user.skills.add') }}" method="POST" id="addSkillForm">
                 @csrf
                 <div class="modal-body">
                     <div class="row">
@@ -276,6 +276,102 @@
         </div>
     </div>
 </div>
+
+<!-- Edit Skill Modal -->
+<div class="modal fade" id="editSkillModal" tabindex="-1" role="dialog" aria-labelledby="editSkillModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editSkillModalLabel">
+                    <i class="fa fa-edit"></i> Edit Skill
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="editSkillForm" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="edit_skill_name" class="form-label">
+                                    <i class="fa fa-star"></i> Skill Name <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="edit_skill_name" name="name" required placeholder="e.g., Web Development, Graphic Design">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="edit_skill_category" class="form-label">
+                                    <i class="fa fa-tags"></i> Category <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-control" id="edit_skill_category" name="category" required>
+                                    <option value="">Select category</option>
+                                    <option value="Development">Development</option>
+                                    <option value="Design">Design</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Writing">Writing</option>
+                                    <option value="Photography">Photography</option>
+                                    <option value="Video">Video</option>
+                                    <option value="Business">Business</option>
+                                    <option value="Consulting">Consulting</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="edit_skill_level" class="form-label">
+                                    <i class="fa fa-level-up"></i> Skill Level <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-control" id="edit_skill_level" name="level" required>
+                                    <option value="">Select level</option>
+                                    <option value="beginner">Beginner</option>
+                                    <option value="intermediate">Intermediate</option>
+                                    <option value="advanced">Advanced</option>
+                                    <option value="expert">Expert</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="edit_experience_years" class="form-label">
+                                    <i class="fa fa-clock-o"></i> Experience Years
+                                </label>
+                                <input type="number" class="form-control" id="edit_experience_years" name="experience_years" min="0" max="50" placeholder="Years of experience">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_skill_description" class="form-label">
+                            <i class="fa fa-align-left"></i> Description <span class="text-danger">*</span>
+                        </label>
+                        <textarea class="form-control" id="edit_skill_description" name="description" rows="3" required placeholder="Describe your skill, what you can offer, and your expertise level..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_hourly_rate" class="form-label">
+                            <i class="fa fa-dollar"></i> Hourly Rate (Optional)
+                        </label>
+                        <input type="number" class="form-control" id="edit_hourly_rate" name="hourly_rate" min="0" step="0.01" placeholder="Your preferred hourly rate">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save"></i> Update Skill
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
 .my-skills-container {
@@ -608,6 +704,32 @@
     background: white;
 }
 
+/* Loading spinner for buttons */
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
 @media (max-width: 768px) {
     .header-title {
         font-size: 2rem;
@@ -654,24 +776,206 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Add skill form submission
+    const addSkillForm = document.getElementById('addSkillForm');
+    if (addSkillForm) {
+        addSkillForm.addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.classList.add('btn-loading');
+            submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Adding...';
+        });
+    }
+
+    // Edit skill form submission
+    const editSkillForm = document.getElementById('editSkillForm');
+    if (editSkillForm) {
+        editSkillForm.addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.classList.add('btn-loading');
+            submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Updating...';
+        });
+    }
 });
 
+// Edit Skill Function
 function editSkill(skillId) {
-    // Add your edit skill logic here
-    console.log('Editing skill:', skillId);
+    // Show loading state
+    Swal.fire({
+        title: 'Loading...',
+        text: 'Fetching skill details',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    // Fetch skill data
+    fetch(`/dashboard/profile/skills/${skillId}/edit`)
+        .then(response => response.json())
+        .then(data => {
+            Swal.close();
+            
+            if (data.success) {
+                // Populate the edit modal with skill data
+                document.getElementById('edit_skill_name').value = data.skill.name;
+                document.getElementById('edit_skill_category').value = data.skill.category;
+                document.getElementById('edit_skill_level').value = data.skill.level;
+                document.getElementById('edit_experience_years').value = data.skill.experience_years || '';
+                document.getElementById('edit_skill_description').value = data.skill.description;
+                document.getElementById('edit_hourly_rate').value = data.skill.hourly_rate || '';
+                
+                // Set the form action URL
+                document.getElementById('editSkillForm').action = `/dashboard/profile/skills/${skillId}`;
+                
+                // Show the edit modal
+                $('#editSkillModal').modal('show');
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message || 'Failed to load skill details'
+                });
+            }
+        })
+        .catch(error => {
+            Swal.close();
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to load skill details. Please try again.'
+            });
+        });
 }
 
+// Delete Skill Function with SweetAlert
+function deleteSkill(skillId, skillName) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `You are about to delete the skill "${skillName}". This action cannot be undone.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Show loading state
+            Swal.fire({
+                title: 'Deleting...',
+                text: 'Please wait while we delete your skill',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Send delete request
+            fetch(`/dashboard/profile/skills/${skillId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted!',
+                        text: 'Your skill has been deleted successfully.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(() => {
+                        // Reload the page to reflect changes
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Failed to delete skill'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to delete skill. Please try again.'
+                });
+            });
+        }
+    });
+}
+
+// View Skill Function
 function viewSkill(skillId) {
     // Add your view skill logic here
     console.log('Viewing skill:', skillId);
+    // You can implement a modal or redirect to a detailed view
 }
 
-function deleteSkill(skillId) {
-    if (confirm('Are you sure you want to delete this skill?')) {
-        // Add your delete skill logic here
-        console.log('Deleting skill:', skillId);
-    }
-}
+// Handle edit form submission
+document.getElementById('editSkillForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    submitBtn.classList.add('btn-loading');
+    submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Updating...';
+    
+    fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        submitBtn.classList.remove('btn-loading');
+        submitBtn.innerHTML = originalText;
+        
+        if (data.success) {
+            $('#editSkillModal').modal('hide');
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Updated!',
+                text: 'Your skill has been updated successfully.',
+                showConfirmButton: false,
+                timer: 2000
+            }).then(() => {
+                window.location.reload();
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message || 'Failed to update skill'
+            });
+        }
+    })
+    .catch(error => {
+        submitBtn.classList.remove('btn-loading');
+        submitBtn.innerHTML = originalText;
+        
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to update skill. Please try again.'
+        });
+    });
+});
 </script>
 
 @endsection 

@@ -105,6 +105,7 @@ Route::middleware(['auth'])->group(function () {
         
         // Skills Routes
         Route::post('/profile/skills', [App\Http\Controllers\ProfileController::class, 'addSkill'])->name('user.skills.add');
+        Route::get('/profile/skills/{skill}/edit', [App\Http\Controllers\ProfileController::class, 'editSkill'])->name('user.skills.edit');
         Route::put('/profile/skills/{skill}', [App\Http\Controllers\ProfileController::class, 'updateSkill'])->name('user.skills.update');
         Route::delete('/profile/skills/{skill}', [App\Http\Controllers\ProfileController::class, 'deleteSkill'])->name('user.skills.delete');
         

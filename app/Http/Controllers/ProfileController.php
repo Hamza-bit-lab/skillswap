@@ -184,14 +184,21 @@ class ProfileController extends Controller
      */
     public function updateSkill(Request $request, Skill $skill)
     {
-        $this->authorize('update', $skill);
+        // Ensure the skill belongs to the authenticated user
+        if ($skill->user_id !== Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You can only update your own skills.'
+            ], 403);
+        }
 
         $request->validate([
             'name' => 'required|string|max:255',
             'category' => 'required|string|max:255',
-            'level' => 'required|in:Beginner,Intermediate,Advanced,Expert',
+            'level' => 'required|in:beginner,intermediate,advanced,expert',
             'description' => 'nullable|string|max:1000',
             'experience_years' => 'nullable|integer|min:0|max:50',
+            'hourly_rate' => 'nullable|numeric|min:0',
         ]);
 
         $skill->update([
@@ -200,6 +207,7 @@ class ProfileController extends Controller
             'level' => $request->level,
             'description' => $request->description,
             'experience_years' => $request->experience_years,
+            'hourly_rate' => $request->hourly_rate,
         ]);
 
         return response()->json([
@@ -210,15 +218,42 @@ class ProfileController extends Controller
     }
 
     /**
+     * Get skill data for editing.
+     */
+    public function editSkill(Skill $skill)
+    {
+        // Ensure the skill belongs to the authenticated user
+        if ($skill->user_id !== Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You can only edit your own skills.'
+            ], 403);
+        }
+
+        return response()->json([
+            'success' => true,
+            'skill' => $skill,
+        ]);
+    }
+
+    /**
      * Delete a skill.
      */
     public function deleteSkill(Skill $skill)
     {
-        $this->authorize('delete', $skill);
+        // Ensure the skill belongs to the authenticated user
+        if ($skill->user_id !== Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You can only delete your own skills.'
+            ], 403);
+        }
+
         $skill->delete();
 
         return response()->json([
             'success' => true,
+            'message' => 'Skill deleted successfully!',
         ]);
     }
 
