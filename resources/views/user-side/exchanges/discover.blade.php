@@ -217,7 +217,7 @@
 
             <!-- Enhanced Skills Grid -->
             <div class="skills-grid" id="skillsGrid">
-    @forelse($skills as $skill)
+    @forelse($skills as $skill) 
         <div class="skill-card enhanced" data-skill-id="{{ $skill->id }}">
             
             <!-- Card Header with User Info -->
@@ -234,10 +234,9 @@
                         @endif
                     </div>
                     <div class="user-info">
-                    <h5 class="user-name">
-                {{ $skill->user->name }}
-               
-            </h5>
+                        <h5 class="user-name">
+                            {{ $skill->user->name }}
+                        </h5>
                         <span class="user-location">
                             <i class="fa fa-map-marker"></i> {{ $skill->user->location ?? 'Location not set' }}
                         </span>
@@ -248,6 +247,10 @@
                                 @endfor
                             </div>
                             <span class="rating-text">{{ number_format($skill->user->getAverageRating(), 1) }}</span>
+                        </div>
+                        <div class="user-actions mt-2">
+                            <a href="{{ route('user.profile.public', ['user' => $skill->user->username]) }}" class="btn btn-sm btn-outline-primary">View Profile</a>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="navigator.clipboard.writeText('{{ url('/profile/' . $skill->user->username) }}'); alert('Profile link copied!')"><i class="fa fa-share"></i> Share</button>
                         </div>
                     </div>
                 </div>
@@ -307,12 +310,12 @@
 
             <!-- Card Actions -->
             <div class="skill-actions">
-                <a href="{{ route('user.exchanges.skill-details', $skill->id) }}" 
+                <a href="{{ route('user.exchanges.skill-details', encrypt($skill->id)) }}" 
                    class="btn btn-primary btn-sm">
                     <i class="fa fa-eye"></i> View Details
                 </a>
                 <button class="btn btn-outline-primary btn-sm" 
-                        onclick="showQuickExchange({{ $skill->id }})">
+                        onclick="showQuickExchange('{{ encrypt($skill->id) }}')">
                     <i class="fa fa-exchange"></i> Quick Exchange
                 </button>
             </div>
@@ -1225,11 +1228,15 @@ document.addEventListener('DOMContentLoaded', function() {
 // Quick Exchange Modal
 function showQuickExchange(skillId) {
     // Load skill details and user's skills for exchange
-    fetch(`/exchanges/quick-exchange/${skillId}`)
+    fetch(`/dashboard/exchanges/quick-exchange/${skillId}`)
         .then(response => response.json())
         .then(data => {
-            document.getElementById('quickExchangeContent').innerHTML = data.html;
-            $('#quickExchangeModal').modal('show');
+            if (data.success) {
+                document.getElementById('quickExchangeContent').innerHTML = data.html;
+                $('#quickExchangeModal').modal('show');
+            } else {
+                alert(data.message || 'Error loading exchange form. Please try again.');
+            }
         })
         .catch(error => {
             console.error('Error loading quick exchange:', error);
@@ -1242,15 +1249,33 @@ function submitQuickExchange() {
     const form = document.getElementById('quickExchangeForm');
     const formData = new FormData(form);
 
-    fetch('/exchanges/quick-exchange', {
+    // Debug: Log form data
+    console.log('Form data:');
+    for (let [key, value] of formData.entries()) {
+        console.log(key + ': ' + value);
+    }
+
+    // Get CSRF token from meta tag
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    console.log('CSRF Token:', csrfToken);
+
+    fetch('/dashboard/exchanges/quick-exchange', {
         method: 'POST',
         body: formData,
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            'X-CSRF-TOKEN': csrfToken,
+            'Accept': 'application/json'
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
+        console.log('Response data:', data);
         if (data.success) {
             $('#quickExchangeModal').modal('hide');
             window.location.href = data.redirect;

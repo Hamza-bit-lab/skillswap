@@ -38,7 +38,7 @@
                     <a href="#how-it-works" class="nav-link">How It Works</a>
                     <a href="#success-stories" class="nav-link">Success Stories</a>
                     <a href="#community" class="nav-link">Community</a>
-                    <a href="#pricing" class="nav-link">Pricing</a>
+
                 </div>
                 
                 <!-- Auth Buttons -->
@@ -326,68 +326,7 @@
         </div>
     </section>
 
-    <!-- Pricing Section -->
-    <section id="pricing" class="pricing-section">
-        <div class="container">
-            <div class="section-header text-center">
-                <h2>Simple, Transparent Pricing</h2>
-                <p>Join SkillSwap and start exchanging skills today</p>
-            </div>
-            
-            <div class="row justify-content-center">
-                <div class="col-lg-4">
-                    <div class="pricing-card">
-                        <div class="pricing-header">
-                            <h3>Free Plan</h3>
-                            <div class="price">
-                                <span class="currency">$</span>
-                                <span class="amount">0</span>
-                                <span class="period">/month</span>
-                            </div>
-                        </div>
-                        <div class="pricing-features">
-                            <ul>
-                                <li><i class="fa fa-check"></i> Create unlimited skill exchanges</li>
-                                <li><i class="fa fa-check"></i> Connect with 5 members per month</li>
-                                <li><i class="fa fa-check"></i> Basic profile features</li>
-                                <li><i class="fa fa-check"></i> Community support</li>
-                            </ul>
-                        </div>
-                        <div class="pricing-action">
-                            <a href="{{ route('register.step1') }}" class="btn btn-outline-primary btn-block">Get Started Free</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-4">
-                    <div class="pricing-card featured">
-                        <div class="pricing-badge">Most Popular</div>
-                        <div class="pricing-header">
-                            <h3>Pro Plan</h3>
-                            <div class="price">
-                                <span class="currency">$</span>
-                                <span class="amount">9</span>
-                                <span class="period">/month</span>
-                            </div>
-                        </div>
-                        <div class="pricing-features">
-                            <ul>
-                                <li><i class="fa fa-check"></i> Everything in Free</li>
-                                <li><i class="fa fa-check"></i> Unlimited connections</li>
-                                <li><i class="fa fa-check"></i> Priority support</li>
-                                <li><i class="fa fa-check"></i> Advanced analytics</li>
-                                <li><i class="fa fa-check"></i> Featured profile</li>
-                                <li><i class="fa fa-check"></i> Skill verification badge</li>
-                            </ul>
-                        </div>
-                        <div class="pricing-action">
-                            <a href="{{ route('register.step1') }}" class="btn btn-primary btn-block">Start Pro Trial</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+
 
     <!-- Call to Action -->
     <section class="cta-section">
@@ -960,104 +899,7 @@
         opacity: 0.9;
     }
 
-    /* Pricing Section */
-    .pricing-section {
-        padding: 80px 0;
-        background: #f8f9fa;
-    }
 
-    .pricing-card {
-        background: white;
-        border-radius: 20px;
-        padding: 2rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
-        position: relative;
-        height: 100%;
-    }
-
-    .pricing-card.featured {
-        border: 3px solid #14a800;
-        transform: scale(1.05);
-    }
-
-    .pricing-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-    }
-
-    .pricing-badge {
-        position: absolute;
-        top: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #14a800;
-        color: white;
-        padding: 0.5rem 1.5rem;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        font-weight: 600;
-    }
-
-    .pricing-header {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-
-    .pricing-header h3 {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 1rem;
-    }
-
-    .price {
-        display: flex;
-        align-items: baseline;
-        justify-content: center;
-        gap: 0.5rem;
-    }
-
-    .currency {
-        font-size: 1.5rem;
-        color: #6c757d;
-    }
-
-    .amount {
-        font-size: 3rem;
-        font-weight: 700;
-        color: #14a800;
-    }
-
-    .period {
-        font-size: 1rem;
-        color: #6c757d;
-    }
-
-    .pricing-features ul {
-        list-style: none;
-        padding: 0;
-        margin-bottom: 2rem;
-    }
-
-    .pricing-features li {
-        padding: 0.5rem 0;
-        color: #6c757d;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .pricing-features i {
-        color: #14a800;
-    }
-
-    .pricing-action .btn {
-        border-radius: 25px;
-        padding: 1rem 2rem;
-        font-weight: 600;
-        width: 100%;
-    }
 
     /* CTA Section */
     .cta-section {
@@ -1197,9 +1039,7 @@
             grid-template-columns: 1fr;
         }
 
-        .pricing-card.featured {
-            transform: none;
-        }
+
 
         .cta-buttons {
             flex-direction: column;
@@ -1231,8 +1071,7 @@
 
         .step-card,
         .skill-category,
-        .story-card,
-        .pricing-card {
+        .story-card {
             padding: 1.5rem;
         }
     }

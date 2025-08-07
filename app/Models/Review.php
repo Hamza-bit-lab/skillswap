@@ -18,12 +18,16 @@ class Review extends Model
         'title',
         'comment',
         'is_verified',
+        'is_approved',
+        'is_rejected',
         'review_type',
     ];
 
     protected $casts = [
         'rating' => 'integer',
         'is_verified' => 'boolean',
+        'is_approved' => 'boolean',
+        'is_rejected' => 'boolean',
     ];
 
     /**

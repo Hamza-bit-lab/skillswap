@@ -49,7 +49,7 @@
                                 <i class="fa fa-search"></i> Discover Skills
                             </a>
                             <a href="{{ route('user.exchanges.my-exchanges') }}" class="btn btn-outline-primary btn-lg">
-                                <i class="fa fa-exchange"></i> My Exchanges
+                                <i class="fa fa-list"></i> My Exchanges
                             </a>
                         </div>
                     </div>
@@ -137,96 +137,72 @@
                         </div>
                         
                         <div class="exchanges-list">
-                            <!-- Exchange Item 1 -->
-                            <div class="exchange-card">
-                                <div class="exchange-header">
-                                    <div class="exchange-users">
-                                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="user-avatar">
-                                        <div class="exchange-arrow">
-                                            <i class="fa fa-exchange"></i>
+                            @php
+                                $recentExchanges = \App\Models\Exchange::where(function($query) {
+                                    $query->where('initiator_id', auth()->id())
+                                          ->orWhere('participant_id', auth()->id());
+                                })->with(['initiator', 'participant', 'initiatorSkill', 'participantSkill'])
+                                ->orderBy('created_at', 'desc')
+                                ->limit(3)
+                                ->get();
+                            @endphp
+                            
+                            @forelse($recentExchanges as $exchange)
+                                @php
+                                    $otherUser = $exchange->initiator_id === auth()->id() ? $exchange->participant : $exchange->initiator;
+                                    $otherUserSkill = $exchange->initiator_id === auth()->id() ? $exchange->participantSkill : $exchange->initiatorSkill;
+                                    $mySkill = $exchange->initiator_id === auth()->id() ? $exchange->initiatorSkill : $exchange->participantSkill;
+                                    $unreadCount = \App\Models\Message::where('exchange_id', $exchange->id)
+                                        ->where('receiver_id', auth()->id())
+                                        ->where('is_read', false)
+                                        ->count();
+                                @endphp
+                                
+                                <div class="exchange-card">
+                                    <div class="exchange-header">
+                                        <div class="exchange-users">
+                                            <img src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('assets/images/default-avatar.jpg') }}" alt="User" class="user-avatar">
+                                            <div class="exchange-arrow">
+                                                <i class="fa fa-exchange"></i>
+                                            </div>
+                                            <img src="{{ $otherUser->avatar ? asset('storage/' . $otherUser->avatar) : asset('assets/images/default-avatar.jpg') }}" alt="User" class="user-avatar">
+                                            <div class="user-actions mt-2">
+                                                <a href="{{ route('user.profile.public', ['user' => $otherUser->username]) }}" class="btn btn-sm btn-outline-primary">View Profile</a>
+                                                <button class="btn btn-sm btn-outline-secondary" onclick="navigator.clipboard.writeText('{{ url('/profile/' . $otherUser->username) }}'); alert('Profile link copied!')"><i class="fa fa-share"></i> Share</button>
+                                            </div>
                                         </div>
-                                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" class="user-avatar">
+                                        <div class="exchange-status">
+                                            <span class="status-badge status-{{ $exchange->status }}">{{ ucfirst(str_replace('_', ' ', $exchange->status)) }}</span>
+                                        </div>
                                     </div>
-                                    <div class="exchange-status">
-                                        <span class="status-badge status-in_progress">In Progress</span>
-                                    </div>
-                                </div>
-                                <div class="exchange-content">
-                                    <h5>Website Development for Logo Design</h5>
-                                    <p>I need a website for my photography business. In exchange, I can provide professional logo design services.</p>
-                                    <div class="exchange-meta">
-                                        <span class="meta-item">
-                                            <i class="fa fa-calendar"></i>
-                                            Started 2 days ago
-                                        </span>
-                                        <span class="meta-item">
-                                            <i class="fa fa-clock-o"></i>
-                                            8 hours estimated
-                                        </span>
-                                    </div>
-                                    <div class="exchange-tags">
-                                        <span class="tag">Web Development</span>
-                                        <span class="tag">Logo Design</span>
-                                    </div>
-                                </div>
-                            </div>
+                                    <div class="exchange-content">
+                                        <h5>{{ $exchange->title }}</h5>
+                                        <p>{{ $exchange->description }}</p>
+                                        <div class="exchange-meta">
+                                            <span class="meta-item">
+                                                <i class="fa fa-calendar"></i>
+                                                {{ $exchange->created_at->diffForHumans() }}
+                                            </span>
+                                            @if($exchange->estimated_hours)
+                                            <span class="meta-item">
+                                                <i class="fa fa-clock-o"></i>
+                                                {{ $exchange->estimated_hours }} hours estimated
+                                            </span>
+                                            @endif
+                                        </div>
+                                        <div class="exchange-tags">
+                                            <span class="tag">{{ $mySkill->name }}</span>
+                                            <span class="tag">{{ $otherUserSkill->name }}</span>
+                                        </div>
 
-                            <!-- Exchange Item 2 -->
-                            <div class="exchange-card">
-                                <div class="exchange-header">
-                                    <div class="exchange-users">
-                                        <img src="https://randomuser.me/api/portraits/women/23.jpg" alt="User" class="user-avatar">
-                                        <div class="exchange-arrow">
-                                            <i class="fa fa-exchange"></i>
-                                        </div>
-                                        <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="User" class="user-avatar">
-                                    </div>
-                                    <div class="exchange-status">
-                                        <span class="status-badge status-pending">Pending</span>
                                     </div>
                                 </div>
-                                <div class="exchange-content">
-                                    <h5>Content Writing for SEO Optimization</h5>
-                                    <p>Looking for content writing services for my blog. I can help with SEO optimization and digital marketing.</p>
-                                    <div class="exchange-meta">
-                                        <span class="meta-item">
-                                            <i class="fa fa-calendar"></i>
-                                            Created 1 week ago
-                                        </span>
-                                        <span class="meta-item">
-                                            <i class="fa fa-clock-o"></i>
-                                            12 hours estimated
-                                        </span>
-                                    </div>
-                                    <div class="exchange-tags">
-                                        <span class="tag">Content Writing</span>
-                                        <span class="tag">SEO</span>
-                                    </div>
+                            @empty
+                                <div class="text-center py-4">
+                                    <i class="fa fa-exchange fa-2x text-muted mb-3"></i>
+                                    <p class="text-muted">No exchanges yet. Start by finding skills to exchange!</p>
                                 </div>
-                            </div>
-
-                            <!-- Exchange Item 3 -->
-                            <div class="exchange-card">
-                                <div class="exchange-header">
-                                    <div class="exchange-users">
-                                        <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="User" class="user-avatar">
-                                        <div class="exchange-arrow">
-                                            <i class="fa fa-exchange"></i>
-                                        </div>
-                                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="User" class="user-avatar">
-                                    </div>
-                                    <div class="exchange-status">
-                                        <span class="status-badge status-completed">Completed</span>
-                                    </div>
-                                </div>
-                                <div class="exchange-content">
-                                    <h5>UI/UX Design for Data Analysis</h5>
-                                    <p>Need UI/UX design for my analytics dashboard. I can provide data analysis and Python development.</p>
-                                    <div class="exchange-meta">
-                                        <span class="meta-item">
-                                            <i class="fa fa-calendar"></i>
-                                            Finished 3 days ago
-                                        </span>
+                            @endforelse
                                         <span class="meta-item">
                                             <i class="fa fa-star"></i>
                                             Rated 5 stars
@@ -697,6 +673,24 @@
     background: #fff;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     transform: translateY(-2px);
+}
+
+.unread-badge-small {
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.message-btn {
+    position: relative;
 }
 
 .exchange-header {

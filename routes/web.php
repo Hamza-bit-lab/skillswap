@@ -23,6 +23,8 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
+
+
 // Guest Routes (Only accessible when NOT logged in)
 Route::middleware(['guest'])->group(function () {
     // Registration Wizard Routes
@@ -86,6 +88,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/skill/{id}', [App\Http\Controllers\SkillController::class, 'showSkill'])->name('user.exchanges.skill-details');
             Route::get('/create', [App\Http\Controllers\ExchangeController::class, 'create'])->name('user.exchanges.create');
             Route::post('/', [App\Http\Controllers\ExchangeController::class, 'store'])->name('user.exchanges.store');
+            Route::get('/quick-exchange/{skillId}', [App\Http\Controllers\ExchangeController::class, 'showQuickExchange'])->name('user.exchanges.quick-exchange');
+            Route::post('/quick-exchange', [App\Http\Controllers\ExchangeController::class, 'storeQuickExchange'])->name('user.exchanges.quick-exchange.store');
             Route::get('/my-exchanges', [App\Http\Controllers\ExchangeController::class, 'myExchanges'])->name('user.exchanges.my-exchanges');
             Route::get('/{id}', [App\Http\Controllers\ExchangeController::class, 'show'])->name('user.exchanges.show');
             Route::post('/{id}/accept', [App\Http\Controllers\ExchangeController::class, 'accept'])->name('user.exchanges.accept');
@@ -93,7 +97,28 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/{id}/complete', [App\Http\Controllers\ExchangeController::class, 'complete'])->name('user.exchanges.complete');
             Route::post('/{id}/cancel', [App\Http\Controllers\ExchangeController::class, 'cancel'])->name('user.exchanges.cancel');
             Route::post('/{id}/message', [App\Http\Controllers\ExchangeController::class, 'sendMessage'])->name('user.exchanges.message');
+            Route::post('/exchanges/{id}/mark-done', [App\Http\Controllers\ExchangeController::class, 'markAsDone'])->name('user.exchanges.mark-done');
             Route::get('/search', [App\Http\Controllers\ExchangeController::class, 'search'])->name('user.exchanges.search');
+            
+            // Chat Routes
+            Route::get('/{id}/messages', [App\Http\Controllers\ChatController::class, 'getMessages'])->name('user.chat.messages');
+            Route::post('/{id}/messages', [App\Http\Controllers\ChatController::class, 'sendMessage'])->name('user.chat.send');
+            Route::post('/{id}/messages/read', [App\Http\Controllers\ChatController::class, 'markAsRead'])->name('user.chat.read');
+            Route::get('/messages/unread', [App\Http\Controllers\ChatController::class, 'getUnreadCount'])->name('user.chat.unread');
+            Route::get('/messages/latest-unread', [App\Http\Controllers\ChatController::class, 'getLatestUnreadMessage'])->name('user.chat.latest-unread');
+            Route::get('/messages', [App\Http\Controllers\MessagesController::class, 'index'])->name('user.messages');
+            Route::get('/messages/recent', [App\Http\Controllers\ChatController::class, 'getRecentMessages'])->name('user.chat.recent');
+            Route::get('/chats/exchanges', [App\Http\Controllers\ChatController::class, 'getExchangeChats'])->name('user.chat.exchanges');
+            Route::post('/{id}/typing', [App\Http\Controllers\ChatController::class, 'sendTypingIndicator'])->name('user.chat.typing');
+            Route::delete('/messages/{id}', [App\Http\Controllers\ChatController::class, 'deleteMessage'])->name('user.chat.delete');
+            Route::get('/{id}/messages/search', [App\Http\Controllers\ChatController::class, 'searchMessages'])->name('user.chat.search');
+            Route::get('/{id}/messages/stats', [App\Http\Controllers\ChatController::class, 'getMessageStats'])->name('user.chat.stats');
+            
+            // User-based messaging routes
+            Route::get('/messages/user/{userId}', [App\Http\Controllers\ChatController::class, 'getUserMessages'])->name('user.chat.user.messages');
+            Route::post('/messages/user/{userId}/read', [App\Http\Controllers\ChatController::class, 'markUserMessagesAsRead'])->name('user.chat.user.read');
+            Route::post('/messages/user/{userId}/send', [App\Http\Controllers\ChatController::class, 'sendUserMessage'])->name('user.chat.user.send');
+
             Route::get('/recommendations', [App\Http\Controllers\ExchangeController::class, 'getRecommendations'])->name('user.exchanges.recommendations');
         });
 
@@ -116,15 +141,23 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/messages', function () {
             return view('user-side.messages');
         })->name('user.messages');
+        
+        Route::get('/chat', function () {
+            return view('user-side.chat');
+        })->name('user.chat');
+        
+        Route::get('/chat-debug', function () {
+            return view('user-side.chat-debug');
+        })->name('user.chat.debug');
 
         Route::get('/skills', function () {
             return view('user-side.skills');
         })->name('user.skills');
         
         // My Exchanges Page
-        Route::get('/my-exchanges', function () {
-            return view('user-side.my-exchanges');
-        })->name('user.my-exchanges');
+        Route::get('/dashboard/my-exchanges', function () {
+            return redirect('/dashboard/exchanges/my-exchanges');
+        });
         
         // My Skills Page
         Route::get('/my-skills', function () {
@@ -144,21 +177,50 @@ Route::middleware(['auth'])->group(function () {
 
     // Admin Routes
     Route::prefix('admin')->middleware('admin')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('admin-side.dashboard');
-        })->name('admin.dashboard');
-
-        Route::get('/users', function () {
-            return view('admin-side.users');
-        })->name('admin.users');
-
-        Route::get('/exchanges', function () {
-            return view('admin-side.exchanges');
-        })->name('admin.exchanges');
-
-        Route::get('/reports', function () {
-            return view('admin-side.reports');
-        })->name('admin.reports');
+        Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
+        Route::get('/users', [App\Http\Controllers\AdminController::class, 'users'])->name('admin.users');
+        Route::get('/skills', [App\Http\Controllers\AdminController::class, 'skills'])->name('admin.skills');
+        Route::get('/exchanges', [App\Http\Controllers\AdminController::class, 'exchanges'])->name('admin.exchanges');
+        Route::get('/reports', [App\Http\Controllers\AdminController::class, 'reports'])->name('admin.reports');
+        Route::get('/settings', [App\Http\Controllers\AdminController::class, 'settings'])->name('admin.settings');
+        
+        // Skills management routes
+        Route::get('/skills/{id}', [App\Http\Controllers\AdminController::class, 'getSkill'])->name('admin.skills.show');
+        Route::post('/skills/{id}/approve', [App\Http\Controllers\AdminController::class, 'approveSkill'])->name('admin.skills.approve');
+        Route::post('/skills/{id}/reject', [App\Http\Controllers\AdminController::class, 'rejectSkill'])->name('admin.skills.reject');
+        Route::post('/skills/bulk-approve', [App\Http\Controllers\AdminController::class, 'bulkApproveSkills'])->name('admin.skills.bulk-approve');
+        Route::post('/skills/bulk-reject', [App\Http\Controllers\AdminController::class, 'bulkRejectSkills'])->name('admin.skills.bulk-reject');
+        Route::get('/skills/export', [App\Http\Controllers\AdminController::class, 'exportSkills'])->name('admin.skills.export');
+        
+        // Users management routes
+        Route::get('/users/{id}', [App\Http\Controllers\AdminController::class, 'getUser'])->name('admin.users.show');
+        Route::post('/users/{id}/suspend', [App\Http\Controllers\AdminController::class, 'suspendUser'])->name('admin.users.suspend');
+        Route::post('/users/{id}/activate', [App\Http\Controllers\AdminController::class, 'activateUser'])->name('admin.users.activate');
+        Route::post('/users/bulk-activate', [App\Http\Controllers\AdminController::class, 'bulkActivateUsers'])->name('admin.users.bulk-activate');
+        Route::post('/users/bulk-suspend', [App\Http\Controllers\AdminController::class, 'bulkSuspendUsers'])->name('admin.users.bulk-suspend');
+        Route::post('/users/{id}/message', [App\Http\Controllers\AdminController::class, 'sendUserMessage'])->name('admin.users.message');
+        Route::get('/users/export', [App\Http\Controllers\AdminController::class, 'exportUsers'])->name('admin.users.export');
+        
+        // Exchanges management routes
+        Route::get('/exchanges/{id}', [App\Http\Controllers\AdminController::class, 'getExchange'])->name('admin.exchanges.show');
+        Route::post('/exchanges/{id}/approve', [App\Http\Controllers\AdminController::class, 'approveExchange'])->name('admin.exchanges.approve');
+        Route::post('/exchanges/{id}/reject', [App\Http\Controllers\AdminController::class, 'rejectExchange'])->name('admin.exchanges.reject');
+        Route::post('/exchanges/{id}/pause', [App\Http\Controllers\AdminController::class, 'pauseExchange'])->name('admin.exchanges.pause');
+        Route::post('/exchanges/{id}/complete', [App\Http\Controllers\AdminController::class, 'completeExchange'])->name('admin.exchanges.complete');
+        Route::post('/exchanges/bulk-approve', [App\Http\Controllers\AdminController::class, 'bulkApproveExchanges'])->name('admin.exchanges.bulk-approve');
+        Route::post('/exchanges/bulk-reject', [App\Http\Controllers\AdminController::class, 'bulkRejectExchanges'])->name('admin.exchanges.bulk-reject');
+        Route::post('/exchanges/bulk-complete', [App\Http\Controllers\AdminController::class, 'bulkCompleteExchanges'])->name('admin.exchanges.bulk-complete');
+        Route::post('/exchanges/{id}/message', [App\Http\Controllers\AdminController::class, 'sendExchangeMessage'])->name('admin.exchanges.message');
+        Route::get('/exchanges/export', [App\Http\Controllers\AdminController::class, 'exportExchanges'])->name('admin.exchanges.export');
+        
+        // Reviews management routes
+        Route::get('/reviews', [App\Http\Controllers\AdminController::class, 'reviews'])->name('admin.reviews');
+        Route::get('/reviews/{id}', [App\Http\Controllers\AdminController::class, 'getReview'])->name('admin.reviews.show');
+        Route::post('/reviews/{id}/approve', [App\Http\Controllers\AdminController::class, 'approveReview'])->name('admin.reviews.approve');
+        Route::post('/reviews/{id}/reject', [App\Http\Controllers\AdminController::class, 'rejectReview'])->name('admin.reviews.reject');
+        Route::post('/reviews/bulk-approve', [App\Http\Controllers\AdminController::class, 'bulkApproveReviews'])->name('admin.reviews.bulk-approve');
+        Route::post('/reviews/bulk-reject', [App\Http\Controllers\AdminController::class, 'bulkRejectReviews'])->name('admin.reviews.bulk-reject');
+        Route::get('/reviews/export', [App\Http\Controllers\AdminController::class, 'exportReviews'])->name('admin.reviews.export');
     });
 });
 
@@ -170,3 +232,6 @@ Route::get('/home', function () {
 Route::get('/user/home', function () {
     return redirect()->route('user.dashboard');
 })->middleware('auth');
+
+// User profile (public, by username)
+Route::get('/profile/{user:username}', [App\Http\Controllers\ProfileController::class, 'showPublic'])->name('user.profile.public');

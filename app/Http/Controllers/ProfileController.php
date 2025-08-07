@@ -30,11 +30,27 @@ class ProfileController extends Controller
         
         $user = Auth::user();
         $skills = $user->skills()->get();
-        $exchanges = $user->exchanges()->with(['skill', 'partner'])->latest()->get();
+        $initiatedExchanges = $user->initiatedExchanges()->with(['initiatorSkill', 'participant'])->latest()->get();
+        $participatedExchanges = $user->participatedExchanges()->with(['participantSkill', 'initiator'])->latest()->get();
+        $exchanges = $initiatedExchanges->merge($participatedExchanges)->sortByDesc('created_at');
         $reviews = $user->receivedReviews()->with('reviewer')->latest()->get();
         $portfolioItems = $user->portfolioItems()->latest()->get();
       
 
+        return view('user-side.profile', compact('user', 'skills', 'exchanges', 'reviews', 'portfolioItems'));
+    }
+
+    /**
+     * Display any user's profile by username.
+     */
+    public function showPublic(User $user)
+    {
+        $skills = $user->skills()->get();
+        $initiatedExchanges = $user->initiatedExchanges()->with(['initiatorSkill', 'participant'])->latest()->get();
+        $participatedExchanges = $user->participatedExchanges()->with(['participantSkill', 'initiator'])->latest()->get();
+        $exchanges = $initiatedExchanges->merge($participatedExchanges)->sortByDesc('created_at');
+        $reviews = $user->receivedReviews()->with('reviewer')->latest()->get();
+        $portfolioItems = $user->portfolioItems()->latest()->get();
         return view('user-side.profile', compact('user', 'skills', 'exchanges', 'reviews', 'portfolioItems'));
     }
 

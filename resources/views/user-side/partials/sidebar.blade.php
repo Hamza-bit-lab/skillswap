@@ -34,6 +34,14 @@
         </div>
         
         <div class="sidebar-section">
+            <h6><i class="fa fa-comments"></i> Messages</h6>
+            <ul class="sidebar-menu">
+                <li><a href="{{ route('user.messages') }}"><i class="fa fa-comments"></i> All Conversations</a></li>
+                <li><a href="{{ route('user.messages') }}?unread=1"><i class="fa fa-envelope"></i> Unread Messages</a></li>
+            </ul>
+        </div>
+        
+        <div class="sidebar-section">
             <h6><i class="fa fa-users"></i> Community</h6>
             <ul class="sidebar-menu">
                 <li><a href="#"><i class="fa fa-comments"></i> Forums</a></li>

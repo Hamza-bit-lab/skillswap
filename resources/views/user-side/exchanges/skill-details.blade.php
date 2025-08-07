@@ -1,876 +1,487 @@
 @extends('user-side.layouts.app')
 
-@section('title', 'SkillSwap - ' . $skill->name)
+@section('title', 'SkillSwap - ' . $skill->name . ' by ' . $skill->user->name)
 
 @section('content')
 <div class="skill-details-container">
     <!-- Header Section -->
-    <div class="skill-header-section">
-        <div class="header-background">
-            <div class="header-overlay"></div>
-        </div>
-        
-        <div class="skill-header-content">
-            <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col-lg-8">
-                        <div class="skill-info">
-                            <div class="skill-badges">
-                                @if($skill->is_featured)
-                                    <span class="badge badge-featured">
-                                        <i class="fa fa-star"></i> Featured Skill
-                                    </span>
-                                @endif
-                                <span class="badge badge-level level-{{ strtolower($skill->level) }}">
-                                    {{ $skill->level }}
-                                </span>
-                            </div>
-                            <h1 class="skill-title">{{ $skill->name }}</h1>
-                            <p class="skill-subtitle">{{ $skill->description }}</p>
-                            <div class="skill-meta">
-                                <span class="meta-item">
-                                    <i class="fa fa-tags"></i> {{ $skill->category }}
-                                </span>
-                                @if($skill->experience_years)
-                                <span class="meta-item">
-                                    <i class="fa fa-clock-o"></i> {{ $skill->experience_years }} years experience
-                                </span>
-                                @endif
-                                <span class="meta-item">
-                                    <i class="fa fa-star"></i> {{ number_format($skill->getAverageRating(), 1) }} rating
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="skill-actions">
-                            @if($existingExchange)
-                                <div class="existing-exchange-alert">
-                                    <i class="fa fa-info-circle"></i>
-                                    <span>You already have an active exchange with this user</span>
-                                    <a href="{{ route('user.exchanges.show', $existingExchange->id) }}" class="btn btn-primary btn-sm">
-                                        View Exchange
-                                    </a>
-                                </div>
-                            @else
-                                <button class="btn btn-primary btn-lg" onclick="showExchangeModal()">
-                                    <i class="fa fa-exchange"></i> Start Exchange
-                                </button>
-                                <button class="btn btn-outline-primary btn-lg" onclick="showContactModal()">
-                                    <i class="fa fa-envelope"></i> Contact User
-                                </button>
-                            @endif
-                        </div>
-                    </div>
+    <div class="skill-details-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('user.exchanges.discover') }}">
+                                    <i class="fa fa-arrow-left"></i> Back to Discover
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active">{{ $skill->name }}</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-md-4 text-right">
+                    <button class="btn btn-primary" onclick="showQuickExchange({{ $skill->id }})">
+                        <i class="fa fa-exchange"></i> Quick Exchange
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="skill-main-content">
-        <div class="container-fluid">
-            <div class="row">
-                <!-- Skill Details -->
-                <div class="col-lg-8">
-                    <!-- Skill Owner Card -->
-                    <div class="content-card">
-                        <div class="card-header">
-                            <h3><i class="fa fa-user"></i> Skill Owner</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="skill-owner">
-                                <div class="owner-avatar">
-                                    <img src="{{ $skill->user->avatar ? asset('storage/' . $skill->user->avatar) : asset('assets/images/default-avatar.jpg') }}" 
-                                         alt="{{ $skill->user->name }}">
-                                </div>
-                                <div class="owner-info">
-                                    <h4>{{ $skill->user->name }}</h4>
-                                    <p class="owner-bio">{{ $skill->user->bio ?? 'No bio available' }}</p>
-                                    <div class="owner-meta">
-                                        <span class="meta-item">
-                                            <i class="fa fa-map-marker"></i> {{ $skill->user->location ?? 'Location not set' }}
-                                        </span>
-                                        <span class="meta-item">
-                                            <i class="fa fa-calendar"></i> Member since {{ $skill->user->created_at->format('M Y') }}
-                                        </span>
-                                        <span class="meta-item">
-                                            <i class="fa fa-star"></i> {{ number_format($skill->user->getAverageRating(), 1) }} rating
-                                        </span>
-                                    </div>
-                                    <div class="owner-stats">
-                                        <div class="stat-item">
-                                            <span class="stat-number">{{ $skill->user->getTotalExchangesCount() }}</span>
-                                            <span class="stat-label">Exchanges</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span class="stat-number">{{ $skill->user->skills()->count() }}</span>
-                                            <span class="stat-label">Skills</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span class="stat-number">{{ $skill->user->receivedReviews()->count() }}</span>
-                                            <span class="stat-label">Reviews</span>
-                                        </div>
-                                    </div>
-                                </div>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Skill Details -->
+            <div class="col-lg-8">
+                <div class="skill-details-card">
+                    <!-- Skill Header -->
+                    <div class="skill-header">
+                        <div class="skill-title-section">
+                            <h1 class="skill-title">{{ $skill->name }}</h1>
+                            <div class="skill-meta">
+                                <span class="badge badge-level level-{{ strtolower($skill->level) }}">
+                                    <i class="fa fa-level-up"></i> {{ ucfirst($skill->level) }}
+                                </span>
+                                <span class="badge badge-category">
+                                    <i class="fa fa-tag"></i> {{ $skill->category }}
+                                </span>
+                                @if($skill->is_verified)
+                                    <span class="badge badge-verified">
+                                        <i class="fa fa-check-circle"></i> Verified
+                                    </span>
+                                @endif
                             </div>
                         </div>
+                        
+                        <div class="skill-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">{{ number_format($skill->getAverageRating(), 1) }}</div>
+                                <div class="stat-label">Rating</div>
+                                <div class="stars">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i class="fa fa-star {{ $i <= $skill->getAverageRating() ? 'text-warning' : 'text-muted' }}"></i>
+                                    @endfor
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">{{ $skill->getReviewsCount() }}</div>
+                                <div class="stat-label">Reviews</div>
+                            </div>
+                            @if($skill->experience_years)
+                            <div class="stat-item">
+                                <div class="stat-number">{{ $skill->experience_years }}</div>
+                                <div class="stat-label">Years Experience</div>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Skill Description -->
+                    <div class="skill-description">
+                        <h3>About This Skill</h3>
+                        <p>{{ $skill->description }}</p>
                     </div>
 
                     <!-- Skill Details -->
-                    <div class="content-card">
-                        <div class="card-header">
-                            <h3><i class="fa fa-info-circle"></i> Skill Details</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="skill-details">
-                                <div class="detail-item">
-                                    <label>Category:</label>
-                                    <span>{{ $skill->category }}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <label>Level:</label>
-                                    <span class="level-badge level-{{ strtolower($skill->level) }}">{{ $skill->level }}</span>
-                                </div>
-                                @if($skill->experience_years)
-                                <div class="detail-item">
-                                    <label>Experience:</label>
-                                    <span>{{ $skill->experience_years }} years</span>
-                                </div>
-                                @endif
-                                @if($skill->hourly_rate)
-                                <div class="detail-item">
-                                    <label>Hourly Rate:</label>
-                                    <span>${{ number_format($skill->hourly_rate, 2) }}/hour</span>
-                                </div>
-                                @endif
-                                @if($skill->portfolio_url)
-                                <div class="detail-item">
-                                    <label>Portfolio:</label>
-                                    <a href="{{ $skill->portfolio_url }}" target="_blank" class="portfolio-link">
-                                        <i class="fa fa-external-link"></i> View Portfolio
-                                    </a>
-                                </div>
-                                @endif
-                                @if($skill->certifications)
-                                <div class="detail-item">
-                                    <label>Certifications:</label>
-                                    <div class="certifications">
-                                        @foreach(json_decode($skill->certifications) as $cert)
-                                            <span class="certification-badge">{{ $cert }}</span>
-                                        @endforeach
-                                    </div>
-                                </div>
-                                @endif
+                    <div class="skill-details-grid">
+                        @if($skill->hourly_rate)
+                        <div class="detail-item">
+                            <i class="fa fa-dollar"></i>
+                            <div class="detail-content">
+                                <strong>Hourly Rate</strong>
+                                <span>${{ number_format($skill->hourly_rate, 2) }}/hour</span>
                             </div>
                         </div>
+                        @endif
+                        
+                        @if($skill->experience_years)
+                        <div class="detail-item">
+                            <i class="fa fa-clock-o"></i>
+                            <div class="detail-content">
+                                <strong>Experience</strong>
+                                <span>{{ $skill->experience_years }} years</span>
+                            </div>
+                        </div>
+                        @endif
+                        
+                        @if($skill->portfolio_url)
+                        <div class="detail-item">
+                            <i class="fa fa-link"></i>
+                            <div class="detail-content">
+                                <strong>Portfolio</strong>
+                                <a href="{{ $skill->portfolio_url }}" target="_blank">View Portfolio</a>
+                            </div>
+                        </div>
+                        @endif
+                        
+                        @if($skill->certifications)
+                        <div class="detail-item">
+                            <i class="fa fa-certificate"></i>
+                            <div class="detail-content">
+                                <strong>Certifications</strong>
+                                <span>{{ implode(', ', $skill->certifications) }}</span>
+                            </div>
+                        </div>
+                        @endif
                     </div>
 
                     <!-- Reviews Section -->
-                    <div class="content-card">
-                        <div class="card-header">
-                            <h3><i class="fa fa-star"></i> Reviews ({{ $skill->reviews->count() }})</h3>
-                        </div>
-                        <div class="card-body">
-                            @if($skill->reviews->count() > 0)
-                                <div class="reviews-summary">
-                                    <div class="average-rating">
-                                        <div class="rating-number">{{ number_format($skill->getAverageRating(), 1) }}</div>
-                                        <div class="rating-stars">
-                                            @for($i = 1; $i <= 5; $i++)
-                                                <i class="fa fa-star {{ $i <= $skill->getAverageRating() ? 'text-warning' : 'text-muted' }}"></i>
-                                            @endfor
-                                        </div>
-                                        <div class="rating-text">out of 5</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="reviews-list">
-                                    @foreach($skill->reviews as $review)
-                                        <div class="review-item">
-                                            <div class="review-header">
-                                                <div class="reviewer-info">
-                                                    <img src="{{ $review->reviewer->avatar ? asset('storage/' . $review->reviewer->avatar) : asset('assets/images/default-avatar.jpg') }}" 
-                                                         alt="{{ $review->reviewer->name }}" class="reviewer-avatar">
-                                                    <div>
-                                                        <h5>{{ $review->reviewer->name }}</h5>
-                                                        <div class="review-rating">
-                                                            @for($i = 1; $i <= 5; $i++)
-                                                                <i class="fa fa-star {{ $i <= $review->rating ? 'text-warning' : 'text-muted' }}"></i>
-                                                            @endfor
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="review-date">
-                                                    {{ $review->created_at->format('M d, Y') }}
-                                                </div>
-                                            </div>
-                                            <div class="review-content">
-                                                <h6>{{ $review->title }}</h6>
-                                                <p>{{ $review->comment }}</p>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @else
-                                <div class="empty-reviews">
-                                    <i class="fa fa-star"></i>
-                                    <h4>No Reviews Yet</h4>
-                                    <p>This skill hasn't received any reviews yet. Be the first to exchange and leave a review!</p>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Other Skills by This User -->
-                    <div class="content-card">
-                        <div class="card-header">
-                            <h3><i class="fa fa-cogs"></i> Other Skills by {{ $skill->user->name }}</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="other-skills">
-                                @forelse($skill->user->skills->where('id', '!=', $skill->id) as $otherSkill)
-                                    <div class="other-skill-item">
-                                        <div class="skill-info">
-                                            <h5>{{ $otherSkill->name }}</h5>
-                                            <p>{{ Str::limit($otherSkill->description, 80) }}</p>
-                                            <div class="skill-meta">
-                                                <span class="category-badge">{{ $otherSkill->category }}</span>
-                                                <span class="level-badge level-{{ strtolower($otherSkill->level) }}">{{ $otherSkill->level }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="skill-actions">
-                                            <a href="{{ route('user.exchanges.skill-details', $otherSkill->id) }}" class="btn btn-outline-primary btn-sm">
-                                                View Details
-                                            </a>
+                    @if($skill->reviews->count() > 0)
+                    <div class="reviews-section">
+                        <h3>Reviews ({{ $skill->reviews->count() }})</h3>
+                        <div class="reviews-list">
+                            @foreach($skill->reviews->take(5) as $review)
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <div class="reviewer-info">
+                                        <img src="{{ $review->reviewer->avatar ? asset('storage/' . $review->reviewer->avatar) : asset('assets/images/default-avatar.jpg') }}" 
+                                             alt="{{ $review->reviewer->name }}" class="reviewer-avatar">
+                                        <div class="reviewer-details">
+                                            <div class="reviewer-name">{{ $review->reviewer->name }}</div>
+                                            <div class="review-date">{{ $review->created_at->format('M d, Y') }}</div>
                                         </div>
                                     </div>
-                                @empty
-                                    <div class="empty-other-skills">
-                                        <p>No other skills available from this user.</p>
+                                    <div class="review-rating">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <i class="fa fa-star {{ $i <= $review->rating ? 'text-warning' : 'text-muted' }}"></i>
+                                        @endfor
                                     </div>
-                                @endforelse
+                                </div>
+                                <div class="review-content">
+                                    <h5>{{ $review->title }}</h5>
+                                    <p>{{ $review->comment }}</p>
+                                </div>
                             </div>
+                            @endforeach
                         </div>
                     </div>
+                    @endif
                 </div>
+            </div>
 
-                <!-- Sidebar -->
-                <div class="col-lg-4">
-                    <!-- Exchange Card -->
-                    <div class="sidebar-card">
-                        <div class="card-header">
-                            <h4><i class="fa fa-exchange"></i> Start Exchange</h4>
-                        </div>
-                        <div class="card-body">
-                            @if($existingExchange)
-                                <div class="existing-exchange">
-                                    <i class="fa fa-info-circle text-info"></i>
-                                    <p>You already have an active exchange with this user.</p>
-                                    <a href="{{ route('user.exchanges.show', $existingExchange->id) }}" class="btn btn-primary">
-                                        View Exchange
-                                    </a>
+            <!-- User Profile Sidebar -->
+            <div class="col-lg-4">
+                <div class="user-profile-card">
+                    <div class="user-header">
+                        <img src="{{ $skill->user->avatar ? asset('storage/' . $skill->user->avatar) : asset('assets/images/default-avatar.jpg') }}" 
+                             alt="{{ $skill->user->name }}" class="user-avatar">
+                        <div class="user-info">
+                            <h3>{{ $skill->user->name }}</h3>
+                            @if($skill->user->is_verified)
+                                <span class="verification-badge">
+                                    <i class="fa fa-check-circle"></i> Verified User
+                                </span>
+                            @endif
+                            @if($skill->user->location)
+                                <div class="user-location">
+                                    <i class="fa fa-map-marker"></i> {{ $skill->user->location }}
                                 </div>
-                            @else
-                                <div class="exchange-info">
-                                    <p>Ready to exchange skills? Choose one of your skills to offer in return.</p>
-                                    
-                                    @if($userSkills->count() > 0)
-                                        <div class="your-skills">
-                                            <h5>Your Skills:</h5>
-                                            <div class="skills-list">
-                                                @foreach($userSkills as $userSkill)
-                                                    <div class="skill-option">
-                                                        <input type="radio" name="selected_skill" id="skill_{{ $userSkill->id }}" value="{{ $userSkill->id }}">
-                                                        <label for="skill_{{ $userSkill->id }}">
-                                                            <span class="skill-name">{{ $userSkill->name }}</span>
-                                                            <span class="skill-level level-{{ strtolower($userSkill->level) }}">{{ $userSkill->level }}</span>
-                                                        </label>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                            
-                                            <button class="btn btn-primary btn-block" onclick="showExchangeModal()">
-                                                <i class="fa fa-exchange"></i> Start Exchange
-                                            </button>
-                                        </div>
-                                    @else
-                                        <div class="no-skills">
-                                            <i class="fa fa-exclamation-triangle text-warning"></i>
-                                            <p>You need to add skills to your profile before you can start exchanges.</p>
-                                            <a href="{{ route('user.skills') }}" class="btn btn-primary">
-                                                <i class="fa fa-plus"></i> Add Skills
-                                            </a>
-                                        </div>
-                                    @endif
+                            @endif
+                            <div class="user-rating">
+                                <div class="stars">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i class="fa fa-star {{ $i <= $skill->user->getAverageRating() ? 'text-warning' : 'text-muted' }}"></i>
+                                    @endfor
+                                </div>
+                                <span class="rating-text">{{ number_format($skill->user->getAverageRating(), 1) }} ({{ $skill->user->receivedReviews->count() }} reviews)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if($skill->user->bio)
+                    <div class="user-bio">
+                        <h4>About</h4>
+                        <p>{{ $skill->user->bio }}</p>
+                    </div>
+                    @endif
+
+                    <div class="user-skills">
+                        <h4>Skills Offered</h4>
+                        <div class="skills-list">
+                            @foreach($skill->user->skills->take(5) as $userSkill)
+                            <div class="skill-item">
+                                <span class="skill-name">{{ $userSkill->name }}</span>
+                                <span class="skill-level level-{{ strtolower($userSkill->level) }}">{{ ucfirst($userSkill->level) }}</span>
+                            </div>
+                            @endforeach
+                            @if($skill->user->skills->count() > 5)
+                                <div class="more-skills">
+                                    <a href="#" class="text-primary">+{{ $skill->user->skills->count() - 5 }} more skills</a>
                                 </div>
                             @endif
                         </div>
                     </div>
 
-                    <!-- Contact Card -->
-                    <div class="sidebar-card">
-                        <div class="card-header">
-                            <h4><i class="fa fa-envelope"></i> Contact {{ $skill->user->name }}</h4>
+                    <div class="user-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">{{ $skill->user->getTotalExchangesCount() }}</div>
+                            <div class="stat-label">Total Exchanges</div>
                         </div>
-                        <div class="card-body">
-                            <div class="contact-info">
-                                @if($skill->user->email)
-                                <div class="contact-item">
-                                    <i class="fa fa-envelope"></i>
-                                    <span>{{ $skill->user->email }}</span>
-                                </div>
-                                @endif
-                                @if($skill->user->phone)
-                                <div class="contact-item">
-                                    <i class="fa fa-phone"></i>
-                                    <span>{{ $skill->user->phone }}</span>
-                                </div>
-                                @endif
-                                @if($skill->user->website)
-                                <div class="contact-item">
-                                    <i class="fa fa-globe"></i>
-                                    <a href="{{ $skill->user->website }}" target="_blank">Website</a>
-                                </div>
-                                @endif
-                            </div>
-                            
-                            <div class="social-links">
-                                @if($skill->user->linkedin)
-                                <a href="{{ $skill->user->linkedin }}" target="_blank" class="social-link linkedin">
-                                    <i class="fa fa-linkedin"></i>
-                                </a>
-                                @endif
-                                @if($skill->user->github)
-                                <a href="{{ $skill->user->github }}" target="_blank" class="social-link github">
-                                    <i class="fa fa-github"></i>
-                                </a>
-                                @endif
-                                @if($skill->user->twitter)
-                                <a href="{{ $skill->user->twitter }}" target="_blank" class="social-link twitter">
-                                    <i class="fa fa-twitter"></i>
-                                </a>
-                                @endif
-                            </div>
+                        <div class="stat-item">
+                            <div class="stat-number">{{ $skill->user->getCompletedExchangesCount() }}</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">{{ $skill->user->skills->count() }}</div>
+                            <div class="stat-label">Skills</div>
                         </div>
                     </div>
 
-                    <!-- Similar Skills -->
-                    <div class="sidebar-card">
-                        <div class="card-header">
-                            <h4><i class="fa fa-lightbulb"></i> Similar Skills</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="similar-skills">
-                                @php
-                                    $similarSkills = \App\Models\Skill::where('category', $skill->category)
-                                        ->where('id', '!=', $skill->id)
-                                        ->where('user_id', '!=', auth()->id())
-                                        ->where('is_verified', true)
-                                        ->limit(3)
-                                        ->get();
-                                @endphp
-                                
-                                @forelse($similarSkills as $similarSkill)
-                                    <div class="similar-skill-item">
-                                        <div class="skill-info">
-                                            <h6>{{ $similarSkill->name }}</h6>
-                                            <p>{{ Str::limit($similarSkill->description, 60) }}</p>
-                                            <div class="skill-meta">
-                                                <span class="user-name">{{ $similarSkill->user->name }}</span>
-                                                <span class="level-badge level-{{ strtolower($similarSkill->level) }}">{{ $similarSkill->level }}</span>
-                                            </div>
-                                        </div>
-                                        <a href="{{ route('user.exchanges.skill-details', $similarSkill->id) }}" class="btn btn-outline-primary btn-sm">
-                                            View
-                                        </a>
-                                    </div>
-                                @empty
-                                    <p class="text-muted">No similar skills found.</p>
-                                @endforelse
-                            </div>
+                    @if($existingExchange)
+                    <div class="existing-exchange-alert">
+                        <div class="alert alert-info">
+                            <i class="fa fa-info-circle"></i>
+                            <strong>Active Exchange:</strong> You already have an exchange with this user.
+                            <a href="{{ route('user.exchanges.show', encrypt($existingExchange->id)) }}" class="btn btn-sm btn-primary mt-2">
+                                View Exchange
+                            </a>
                         </div>
                     </div>
+                    @else
+                    <div class="exchange-actions">
+                        <button class="btn btn-primary btn-block" onclick="showQuickExchange('{{ encrypt($skill->id) }}')">
+                            <i class="fa fa-exchange"></i> Propose Exchange
+                        </button>
+                        <button class="btn btn-outline-primary btn-block">
+                            <i class="fa fa-envelope"></i> Send Message
+                        </button>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Exchange Modal -->
-<div class="modal fade" id="exchangeModal" tabindex="-1" role="dialog">
+<!-- Quick Exchange Modal -->
+<div class="modal fade" id="quickExchangeModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
-                    <i class="fa fa-exchange"></i> Start Exchange
+                    <i class="fa fa-exchange"></i> Quick Exchange
                 </h5>
                 <button type="button" class="close" data-dismiss="modal">
                     <span>&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <form action="{{ route('user.exchanges.store') }}" method="POST" id="exchangeForm">
-                    @csrf
-                    <input type="hidden" name="participant_skill_id" value="{{ $skill->id }}">
-                    
-                    <div class="exchange-preview">
-                        <div class="exchange-users">
-                            <div class="user-card">
-                                <img src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('assets/images/default-avatar.jpg') }}" 
-                                     alt="{{ auth()->user()->name }}" class="user-avatar">
-                                <h6>{{ auth()->user()->name }}</h6>
-                                <p>You</p>
-                            </div>
-                            <div class="exchange-arrow">
-                                <i class="fa fa-exchange"></i>
-                            </div>
-                            <div class="user-card">
-                                <img src="{{ $skill->user->avatar ? asset('storage/' . $skill->user->avatar) : asset('assets/images/default-avatar.jpg') }}" 
-                                     alt="{{ $skill->user->name }}" class="user-avatar">
-                                <h6>{{ $skill->user->name }}</h6>
-                                <p>{{ $skill->name }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="initiator_skill_id" class="form-label">
-                            <i class="fa fa-cogs"></i> Your Skill to Offer <span class="required">*</span>
-                        </label>
-                        <select class="form-control" id="initiator_skill_id" name="initiator_skill_id" required>
-                            <option value="">Select your skill</option>
-                            @foreach($userSkills as $userSkill)
-                                <option value="{{ $userSkill->id }}">{{ $userSkill->name }} ({{ $userSkill->level }})</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="title" class="form-label">
-                            <i class="fa fa-pencil"></i> Exchange Title <span class="required">*</span>
-                        </label>
-                        <input type="text" class="form-control" id="title" name="title" 
-                               placeholder="e.g., Logo Design for Website Development" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="description" class="form-label">
-                            <i class="fa fa-align-left"></i> Exchange Description <span class="required">*</span>
-                        </label>
-                        <textarea class="form-control" id="description" name="description" rows="4" 
-                                  placeholder="Describe what you want to achieve with this exchange..." required></textarea>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="estimated_hours" class="form-label">
-                                    <i class="fa fa-clock-o"></i> Estimated Hours
-                                </label>
-                                <input type="number" class="form-control" id="estimated_hours" name="estimated_hours" 
-                                       min="1" max="200" placeholder="e.g., 20">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="communication_preference" class="form-label">
-                                    <i class="fa fa-comments"></i> Communication
-                                </label>
-                                <select class="form-control" id="communication_preference" name="communication_preference">
-                                    <option value="">Select communication method</option>
-                                    <option value="chat" selected>Chat</option>
-                                    <option value="video">Video Call</option>
-                                    <option value="email">Email</option>
-                                    <option value="phone">Phone</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fa fa-list"></i> Terms & Conditions
-                        </label>
-                        <div class="terms-checkboxes">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="term_quality" name="terms[]" value="quality">
-                                <label class="form-check-label" for="term_quality">
-                                    Both parties agree to deliver high-quality work
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="term_communication" name="terms[]" value="communication">
-                                <label class="form-check-label" for="term_communication">
-                                    Maintain regular communication throughout the exchange
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="term_timeline" name="terms[]" value="timeline">
-                                <label class="form-check-label" for="term_timeline">
-                                    Respect agreed timelines and deadlines
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="submit" form="exchangeForm" class="btn btn-primary">
-                    <i class="fa fa-paper-plane"></i> Send Exchange Proposal
-                </button>
+            <div class="modal-body" id="quickExchangeContent">
+                <!-- Content will be loaded here -->
             </div>
         </div>
     </div>
 </div>
 
 <style>
-/* Skill Details Container */
 .skill-details-container {
+    background: #f8f9fa;
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 0;
+    padding: 20px 0;
 }
 
-/* Header Section */
-.skill-header-section {
-    position: relative;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 60px 0 40px;
+.skill-details-header {
+    background: white;
+    padding: 20px 0;
+    border-bottom: 1px solid #e9ecef;
     margin-bottom: 30px;
 }
 
-.header-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1974&q=80') center/cover;
+.breadcrumb {
+    background: none;
+    padding: 0;
+    margin: 0;
 }
 
-.header-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+.breadcrumb-item a {
+    color: #14a800;
+    text-decoration: none;
 }
 
-.skill-header-content {
-    position: relative;
-    z-index: 2;
+.breadcrumb-item a:hover {
+    text-decoration: underline;
 }
 
-.skill-info {
-    color: #fff;
+.skill-details-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
 }
 
-.skill-badges {
+.skill-header {
     display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-
-.badge-featured {
-    background: rgba(255, 255, 255, 0.2);
-    color: #fff;
-}
-
-.badge-level {
-    background: rgba(255, 255, 255, 0.2);
-    color: #fff;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f8f9fa;
 }
 
 .skill-title {
     font-size: 2.5rem;
     font-weight: 700;
-    margin: 0 0 15px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    line-height: 1.2;
-    word-wrap: break-word;
-}
-
-.skill-subtitle {
-    font-size: 1.2rem;
-    opacity: 0.9;
-    margin-bottom: 20px;
-    line-height: 1.6;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    color: #333;
+    margin: 0 0 15px 0;
 }
 
 .skill-meta {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-bottom: 25px;
-}
-
-.meta-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    opacity: 0.9;
-    font-size: 0.9rem;
-}
-
-.meta-item i {
-    width: 16px;
-}
-
-.skill-actions {
-    text-align: center;
-}
-
-.skill-actions .btn {
-    border-radius: 25px;
-    padding: 12px 25px;
-    font-weight: 600;
-    margin-bottom: 10px;
-    width: 100%;
-}
-
-.existing-exchange-alert {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    padding: 20px;
-    text-align: center;
-    color: #fff;
-}
-
-.existing-exchange-alert i {
-    font-size: 2rem;
-    margin-bottom: 10px;
-    display: block;
-}
-
-/* Main Content */
-.skill-main-content {
-    background: #f8f9fa;
-    min-height: 60vh;
-    padding: 30px 0;
-}
-
-.content-card, .sidebar-card {
-    background: #fff;
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    margin-bottom: 30px;
-    overflow: visible;
-    border: 1px solid #e9ecef;
-}
-
-.card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
-    padding: 20px;
-    border: none;
-}
-
-.card-header h3, .card-header h4 {
-    margin: 0;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
     gap: 10px;
-}
-
-.card-body {
-    padding: 30px;
-}
-
-/* Skill Owner */
-.skill-owner {
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-}
-
-.owner-avatar img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid #fff;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.owner-info h4 {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: #333;
-    margin: 0 0 15px;
-    line-height: 1.3;
-    word-wrap: break-word;
-}
-
-.owner-bio {
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 20px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
-.owner-meta {
-    display: flex;
     flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 25px;
 }
 
-.owner-stats {
+.badge {
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-level {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.level-beginner { background: #d4edda; color: #155724; }
+.level-intermediate { background: #fff3cd; color: #856404; }
+.level-advanced { background: #cce5ff; color: #004085; }
+.level-expert { background: #f8d7da; color: #721c24; }
+
+.badge-category {
+    background: #14a800;
+    color: white;
+}
+
+.badge-verified {
+    background: #28a745;
+    color: white;
+}
+
+.skill-stats {
     display: flex;
     gap: 20px;
+    text-align: center;
 }
 
 .stat-item {
-    text-align: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    min-width: 80px;
 }
 
 .stat-number {
-    display: block;
     font-size: 1.5rem;
     font-weight: 700;
-    color: #667eea;
+    color: #333;
+    margin-bottom: 5px;
 }
 
 .stat-label {
     font-size: 0.8rem;
     color: #6c757d;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    margin-bottom: 5px;
 }
 
-/* Skill Details */
-.skill-details {
+.stars {
     display: flex;
-    flex-direction: column;
-    gap: 15px;
+    gap: 2px;
+    justify-content: center;
+}
+
+.stars i {
+    font-size: 0.8rem;
+}
+
+.skill-description {
+    margin-bottom: 30px;
+}
+
+.skill-description h3 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.skill-description p {
+    color: #666;
+    line-height: 1.6;
+    font-size: 1.1rem;
+}
+
+.skill-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
 }
 
 .detail-item {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid #f8f9fa;
-}
-
-.detail-item:last-child {
-    border-bottom: none;
-}
-
-.detail-item label {
-    font-weight: 600;
-    color: #333;
-    min-width: 120px;
-}
-
-.level-badge {
-    padding: 4px 12px;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-
-.portfolio-link {
-    color: #667eea;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.portfolio-link:hover {
-    color: #764ba2;
-    text-decoration: none;
-}
-
-.certifications {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.certification-badge {
-    background: #e9ecef;
-    color: #495057;
-    padding: 4px 8px;
-    border-radius: 10px;
-    font-size: 0.8rem;
-}
-
-/* Reviews */
-.reviews-summary {
-    text-align: center;
-    margin-bottom: 30px;
+    gap: 15px;
     padding: 20px;
     background: #f8f9fa;
     border-radius: 10px;
+    border: 1px solid #e9ecef;
 }
 
-.average-rating {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
+.detail-item i {
+    font-size: 1.5rem;
+    color: #14a800;
+    width: 30px;
+    text-align: center;
 }
 
-.rating-number {
-    font-size: 3rem;
-    font-weight: 700;
-    color: #667eea;
+.detail-content {
+    flex: 1;
 }
 
-.rating-stars {
-    display: flex;
-    gap: 2px;
+.detail-content strong {
+    display: block;
+    color: #333;
+    margin-bottom: 5px;
 }
 
-.rating-stars i {
-    font-size: 1.2rem;
+.detail-content span,
+.detail-content a {
+    color: #666;
+    text-decoration: none;
 }
 
-.rating-text {
-    color: #6c757d;
-    font-size: 0.9rem;
+.detail-content a:hover {
+    color: #14a800;
 }
 
-.reviews-list {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+.reviews-section {
+    border-top: 2px solid #f8f9fa;
+    padding-top: 30px;
+}
+
+.reviews-section h3 {
+    color: #333;
+    margin-bottom: 20px;
 }
 
 .review-item {
     padding: 20px;
     background: #f8f9fa;
     border-radius: 10px;
+    margin-bottom: 15px;
     border: 1px solid #e9ecef;
 }
 
 .review-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     margin-bottom: 15px;
 }
 
 .reviewer-info {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .reviewer-avatar {
@@ -880,20 +491,9 @@
     object-fit: cover;
 }
 
-.reviewer-info h5 {
-    font-size: 1rem;
+.reviewer-name {
     font-weight: 600;
     color: #333;
-    margin: 0 0 5px;
-}
-
-.review-rating {
-    display: flex;
-    gap: 2px;
-}
-
-.review-rating i {
-    font-size: 0.8rem;
 }
 
 .review-date {
@@ -901,11 +501,14 @@
     color: #6c757d;
 }
 
-.review-content h6 {
-    font-size: 1rem;
-    font-weight: 600;
+.review-rating {
+    display: flex;
+    gap: 2px;
+}
+
+.review-content h5 {
     color: #333;
-    margin: 0 0 8px;
+    margin-bottom: 10px;
 }
 
 .review-content p {
@@ -914,85 +517,85 @@
     margin: 0;
 }
 
-.empty-reviews {
-    text-align: center;
-    padding: 40px 20px;
-    color: #666;
+/* User Profile Sidebar */
+.user-profile-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 20px;
 }
 
-.empty-reviews i {
-    font-size: 3rem;
-    color: #ddd;
+.user-header {
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f8f9fa;
+}
+
+.user-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #14a800;
     margin-bottom: 15px;
 }
 
-.empty-reviews h4 {
+.user-info h3 {
     color: #333;
     margin-bottom: 10px;
 }
 
-/* Other Skills */
-.other-skills {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.other-skill-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    background: #f8f9fa;
-    border-radius: 10px;
-    border: 1px solid #e9ecef;
-}
-
-.skill-info h5 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #333;
-    margin: 0 0 5px;
-}
-
-.skill-info p {
-    color: #666;
+.verification-badge {
+    color: #28a745;
     font-size: 0.9rem;
-    margin: 0 0 8px;
+    margin-bottom: 10px;
 }
 
-.skill-meta {
-    display: flex;
-    gap: 8px;
-}
-
-.category-badge {
-    background: #e9ecef;
-    color: #495057;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 0.7rem;
-}
-
-.empty-other-skills {
-    text-align: center;
+.user-location {
     color: #6c757d;
-    padding: 20px;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
 }
 
-/* Sidebar Cards */
-.sidebar-card {
+.user-rating {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.rating-text {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.user-bio {
     margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f8f9fa;
 }
 
-.exchange-info p {
+.user-bio h4 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.user-bio p {
     color: #666;
-    margin-bottom: 20px;
+    line-height: 1.5;
+    margin: 0;
 }
 
-.your-skills h5 {
-    font-size: 1rem;
-    font-weight: 600;
+.user-skills {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f8f9fa;
+}
+
+.user-skills h4 {
     color: #333;
     margin-bottom: 15px;
 }
@@ -1001,396 +604,165 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-bottom: 20px;
 }
 
-.skill-option {
+.skill-item {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 10px;
     padding: 10px;
     background: #f8f9fa;
     border-radius: 8px;
     border: 1px solid #e9ecef;
-}
-
-.skill-option input[type="radio"] {
-    margin: 0;
-}
-
-.skill-option label {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin: 0;
-    cursor: pointer;
 }
 
 .skill-name {
-    font-weight: 500;
+    font-weight: 600;
     color: #333;
 }
 
-.no-skills {
+.skill-level {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.more-skills {
     text-align: center;
-    padding: 20px;
+    padding: 10px;
 }
 
-.no-skills i {
-    font-size: 2rem;
-    margin-bottom: 10px;
-    display: block;
+.user-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f8f9fa;
 }
 
-.no-skills p {
-    color: #666;
-    margin-bottom: 15px;
-}
-
-/* Contact Info */
-.contact-info {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 20px;
-}
-
-.contact-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 0;
-}
-
-.contact-item i {
-    width: 16px;
-    color: #667eea;
-}
-
-.contact-item a {
-    color: #667eea;
-    text-decoration: none;
-}
-
-.contact-item a:hover {
-    color: #764ba2;
-}
-
-.social-links {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-}
-
-.social-link {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.social-link.linkedin { background: #0077b5; }
-.social-link.github { background: #333; }
-.social-link.twitter { background: #1da1f2; }
-
-.social-link:hover {
-    transform: translateY(-2px);
-    color: #fff;
-    text-decoration: none;
-}
-
-/* Similar Skills */
-.similar-skills {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.similar-skill-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
+.user-stats .stat-item {
+    text-align: center;
+    padding: 15px 10px;
     background: #f8f9fa;
     border-radius: 8px;
     border: 1px solid #e9ecef;
 }
 
-.similar-skill-item h6 {
-    font-size: 0.9rem;
-    font-weight: 600;
+.user-stats .stat-number {
+    font-size: 1.2rem;
+    font-weight: 700;
     color: #333;
-    margin: 0 0 3px;
+    margin-bottom: 5px;
 }
 
-.similar-skill-item p {
-    color: #666;
-    font-size: 0.8rem;
-    margin: 0 0 5px;
-}
-
-.skill-meta {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-}
-
-.user-name {
+.user-stats .stat-label {
     font-size: 0.7rem;
     color: #6c757d;
-}
-
-/* Modal Styles */
-.modal-content {
-    border-radius: 15px;
-    border: none;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-    margin: 20px;
-}
-
-.modal-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
-    border-radius: 15px 15px 0 0;
-    border: none;
-}
-
-.modal-title {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.exchange-preview {
-    text-align: center;
-    margin-bottom: 30px;
-    padding: 25px;
-    background: #f8f9fa;
-    border-radius: 10px;
-}
-
-.exchange-users {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 25px;
-    flex-wrap: wrap;
-}
-
-.user-card {
-    text-align: center;
-}
-
-.user-card .user-avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 10px;
-}
-
-.user-card h6 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #333;
-    margin: 0 0 5px;
-}
-
-.user-card p {
-    color: #666;
-    font-size: 0.9rem;
     margin: 0;
 }
 
-.exchange-arrow {
-    font-size: 1.5rem;
-    color: #667eea;
-}
-
-.form-label {
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.form-group {
-    margin-bottom: 25px;
-}
-
-.form-label i {
-    color: #667eea;
-    width: 16px;
-}
-
-.required {
-    color: #dc3545;
-}
-
-.form-control {
-    border: 2px solid #e9ecef;
-    border-radius: 10px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
+.existing-exchange-alert {
     margin-bottom: 20px;
 }
 
-.form-control:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-}
-
-.form-control option {
-    padding: 10px;
-    font-size: 1rem;
-}
-
-.form-control option:first-child {
-    color: #6c757d;
-    font-style: italic;
-}
-
-.form-control option:not(:first-child) {
-    color: #333;
-    font-weight: 500;
-}
-
-.form-control option[selected] {
-    background-color: #667eea;
-    color: #fff;
-}
-
-.terms-checkboxes {
+.exchange-actions {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    margin-top: 15px;
-}
-
-.form-check {
-    display: flex;
-    align-items: flex-start;
     gap: 10px;
 }
 
-.form-check-input {
-    margin-top: 3px;
+.exchange-actions .btn {
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: 600;
 }
 
-.form-check-label {
-    font-size: 0.9rem;
-    color: #666;
-    line-height: 1.5;
-    word-wrap: break-word;
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
-    .skill-title {
-        font-size: 2rem;
-    }
-    
-    .skill-meta {
+    .skill-header {
         flex-direction: column;
-        gap: 10px;
+        gap: 20px;
     }
     
-    .skill-owner {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .owner-stats {
+    .skill-stats {
         justify-content: center;
     }
     
-    .detail-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
+    .skill-details-grid {
+        grid-template-columns: 1fr;
     }
     
-    .detail-item label {
-        min-width: auto;
-    }
-    
-    .exchange-users {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .exchange-arrow {
-        transform: rotate(90deg);
-    }
-    
-    .card-body {
-        padding: 20px;
-    }
-    
-    .modal-content {
-        margin: 10px;
-    }
-    
-    .form-control {
-        padding: 12px 15px;
-    }
-}
-
-@media (max-width: 576px) {
-    .skill-header-section {
-        padding: 40px 0 30px;
-    }
-    
-    .skill-main-content {
-        padding: 20px 0;
-    }
-    
-    .card-body {
-        padding: 20px;
-    }
-    
-    .skill-title {
-        font-size: 1.8rem;
+    .user-profile-card {
+        position: static;
+        margin-top: 20px;
     }
 }
 </style>
 
 <script>
-function showExchangeModal() {
-    $('#exchangeModal').modal('show');
-    
-    // Set default communication preference if not already selected
-    const communicationSelect = document.getElementById('communication_preference');
-    if (communicationSelect && !communicationSelect.value) {
-        // Set a sensible default option
-        communicationSelect.value = 'chat';
-    }
+// Quick Exchange Modal
+function showQuickExchange(skillId) {
+    // Load skill details and user's skills for exchange
+    fetch(`/dashboard/exchanges/quick-exchange/${skillId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('quickExchangeContent').innerHTML = data.html;
+                $('#quickExchangeModal').modal('show');
+            } else {
+                alert(data.message || 'Error loading exchange form. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading quick exchange:', error);
+            alert('Error loading exchange form. Please try again.');
+        });
 }
 
-function showContactModal() {
-    // Implement contact modal functionality
-    alert('Contact functionality will be implemented here.');
-}
+// Submit quick exchange
+function submitQuickExchange() {
+    const form = document.getElementById('quickExchangeForm');
+    const formData = new FormData(form);
 
-// Form validation
-document.getElementById('exchangeForm').addEventListener('submit', function(e) {
-    const selectedSkill = document.querySelector('input[name="selected_skill"]:checked');
-    if (!selectedSkill) {
-        e.preventDefault();
-        alert('Please select a skill to offer in exchange.');
-        return;
+    // Debug: Log form data
+    console.log('Form data:');
+    for (let [key, value] of formData.entries()) {
+        console.log(key + ': ' + value);
     }
-    
-    // Set the selected skill value
-    document.getElementById('initiator_skill_id').value = selectedSkill.value;
-});
+
+    // Get CSRF token from meta tag
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    console.log('CSRF Token:', csrfToken);
+
+    fetch('/dashboard/exchanges/quick-exchange', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': csrfToken,
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        if (data.success) {
+            $('#quickExchangeModal').modal('hide');
+            window.location.href = data.redirect;
+        } else {
+            alert(data.message || 'Error creating exchange. Please try again.');
+        }
+    })
+    .catch(error => {
+        console.error('Error submitting exchange:', error);
+        alert('Error creating exchange. Please try again.');
+    });
+}
 </script>
 @endsection 

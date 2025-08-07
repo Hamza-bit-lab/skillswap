@@ -188,38 +188,38 @@
                             </div>
 
                             <div class="exchange-actions">
-                                <a href="{{ route('user.exchanges.show', $exchange->id) }}" class="btn btn-primary btn-sm">
+                                <a href="{{ route('user.exchanges.show', Crypt::encrypt($exchange->id)) }}" class="btn btn-primary btn-sm">
                                     <i class="fa fa-eye"></i> View Details
                                 </a>
                                 
                                 @if($exchange->status == 'pending' && $exchange->participant_id == auth()->id())
-                                    <form action="{{ route('user.exchanges.accept', $exchange->id) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('user.exchanges.accept', Crypt::encrypt($exchange->id)) }}" method="POST" class="d-inline">
                                         @csrf
                                         <button type="submit" class="btn btn-success btn-sm">
                                             <i class="fa fa-check"></i> Accept
                                         </button>
                                     </form>
-                                    <form action="{{ route('user.exchanges.reject', $exchange->id) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('user.exchanges.reject', Crypt::encrypt($exchange->id)) }}" method="POST" class="d-inline">
                                         @csrf
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to reject this exchange?')">
+                                        <button type="submit" class="btn btn-danger btn-sm swal-reject-btn">
                                             <i class="fa fa-times"></i> Reject
                                         </button>
                                     </form>
                                 @endif
 
                                 @if($exchange->status == 'in_progress')
-                                    <form action="{{ route('user.exchanges.complete', $exchange->id) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('user.exchanges.complete', Crypt::encrypt($exchange->id)) }}" method="POST" class="d-inline">
                                         @csrf
-                                        <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Mark this exchange as completed?')">
+                                        <button type="submit" class="btn btn-success btn-sm swal-complete-btn">
                                             <i class="fa fa-check-circle"></i> Complete
                                         </button>
                                     </form>
                                 @endif
 
                                 @if(in_array($exchange->status, ['pending', 'in_progress']))
-                                    <form action="{{ route('user.exchanges.cancel', $exchange->id) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('user.exchanges.cancel', Crypt::encrypt($exchange->id)) }}" method="POST" class="d-inline">
                                         @csrf
-                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to cancel this exchange?')">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm swal-cancel-btn">
                                             <i class="fa fa-ban"></i> Cancel
                                         </button>
                                     </form>
@@ -767,3 +767,70 @@
 }
 </style>
 @endsection 
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Reject
+    document.querySelectorAll('.swal-reject-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const form = btn.closest('form');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Are you sure you want to reject this exchange?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, reject it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+    // Complete
+    document.querySelectorAll('.swal-complete-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const form = btn.closest('form');
+            Swal.fire({
+                title: 'Complete Exchange?',
+                text: 'Mark this exchange as completed?',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, complete!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+    // Cancel
+    document.querySelectorAll('.swal-cancel-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const form = btn.closest('form');
+            Swal.fire({
+                title: 'Cancel Exchange?',
+                text: 'Are you sure you want to cancel this exchange?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, cancel!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+});
+</script>
+@endpush 

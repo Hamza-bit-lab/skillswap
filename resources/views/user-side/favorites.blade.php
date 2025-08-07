@@ -857,10 +857,21 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function removeFavorite(type, id) {
-    if (confirm('Are you sure you want to remove this from favorites?')) {
-        // Add your remove favorite logic here
-        console.log('Removing favorite:', type, id);
-    }
+    Swal.fire({
+        title: 'Remove from favorites?',
+        text: 'Are you sure you want to remove this from favorites?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, remove it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Add your remove favorite logic here
+            console.log('Removing favorite:', type, id);
+            // You may want to submit a form or make an AJAX request here
+        }
+    });
 }
 </script>
 

@@ -667,6 +667,7 @@
 }
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Avatar Upload Functionality
@@ -779,13 +780,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // Remove Avatar
     if (removeAvatarBtn) {
         removeAvatarBtn.addEventListener('click', function() {
-            if (confirm('Are you sure you want to remove your avatar?')) {
-                // Reset to default avatar
-                currentAvatar.src = '{{ asset("assets/images/default-avatar.jpg") }}';
-                showAlert('Avatar removed successfully!', 'success');
-                
-                // You might want to make an API call here to actually remove the avatar from the server
-            }
+            Swal.fire({
+                title: 'Remove Avatar?',
+                text: 'Are you sure you want to remove your avatar?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, remove it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentAvatar.src = '{{ asset("assets/images/default-avatar.jpg") }}';
+                    showAlert('Avatar removed successfully!', 'success');
+                    // You might want to make an API call here to actually remove the avatar from the server
+                }
+            });
         });
     }
 
@@ -809,10 +818,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Reset Form
     const resetFormBtn = document.getElementById('resetForm');
     resetFormBtn.addEventListener('click', function() {
-        if (confirm('Are you sure you want to reset all changes?')) {
-            document.getElementById('profileForm').reset();
-            bioCount.textContent = '{{ strlen(Auth::user()->bio ?? "") }}';
-        }
+        Swal.fire({
+            title: 'Reset Changes?',
+            text: 'Are you sure you want to reset all changes?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#ffc107',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, reset!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('profileForm').reset();
+                bioCount.textContent = '{{ strlen(Auth::user()->bio ?? "") }}';
+            }
+        });
     });
 
     // Show Alert Function

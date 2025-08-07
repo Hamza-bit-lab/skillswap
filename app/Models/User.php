@@ -33,6 +33,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'github',
         'twitter',
         'is_admin',
+        'is_suspended',
         'is_verified',
         'rating',
         'total_exchanges',
@@ -78,6 +79,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'is_admin' => 'boolean',
+        'is_suspended' => 'boolean',
         'is_verified' => 'boolean',
         'rating' => 'float',
         'member_since' => 'datetime',
@@ -109,11 +111,13 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Get all exchanges for the user
+     * Get all exchanges for the user (as collections)
      */
-    public function exchanges()
+    public function getAllExchanges()
     {
-        return $this->initiatedExchanges()->union($this->participatedExchanges());
+        $initiated = $this->initiatedExchanges()->get();
+        $participated = $this->participatedExchanges()->get();
+        return $initiated->merge($participated)->sortByDesc('created_at');
     }
 
     /**
@@ -125,11 +129,11 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Get the user's reviews
+     * Get the user's reviews (as reviewer)
      */
     public function reviews()
     {
-        return $this->hasMany(Review::class);
+        return $this->hasMany(Review::class, 'reviewer_id');
     }
 
     /**
@@ -171,5 +175,13 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->initiatedExchanges()->where('status', 'completed')->count() + 
                $this->participatedExchanges()->where('status', 'completed')->count();
+    }
+
+    /**
+     * Use username for route model binding.
+     */
+    public function getRouteKeyName()
+    {
+        return 'username';
     }
 }

@@ -137,96 +137,106 @@
             </div>
 
             <div class="row" id="exchanges-grid">
-                <!-- Exchange Card 1 -->
-                <div class="col-lg-6 col-xl-4 mb-4">
-                    <div class="exchange-card">
-                        <div class="exchange-header">
-                            <div class="exchange-users">
-                                <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="User" class="user-avatar">
-                                <div class="exchange-arrow">
-                                    <i class="fa fa-exchange"></i>
+                @php
+                    $userExchanges = \App\Models\Exchange::where(function($query) {
+                        $query->where('initiator_id', auth()->id())
+                              ->orWhere('participant_id', auth()->id());
+                    })->with(['initiator', 'participant', 'initiatorSkill', 'participantSkill'])
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+                @endphp
+                
+                @forelse($userExchanges as $exchange)
+                    @php
+                        $otherUser = $exchange->initiator_id === auth()->id() ? $exchange->participant : $exchange->initiator;
+                        $otherUserSkill = $exchange->initiator_id === auth()->id() ? $exchange->participantSkill : $exchange->initiatorSkill;
+                        $mySkill = $exchange->initiator_id === auth()->id() ? $exchange->initiatorSkill : $exchange->participantSkill;
+                        $unreadCount = \App\Models\Message::where('exchange_id', $exchange->id)
+                            ->where('receiver_id', auth()->id())
+                            ->where('is_read', false)
+                            ->count();
+                    @endphp
+                    
+                    <div class="col-lg-6 col-xl-4 mb-4">
+                        <div class="exchange-card" data-exchange-id="{{ $exchange->id }}">
+                            <div class="exchange-header">
+                                <div class="exchange-users">
+                                    <img src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('assets/images/default-avatar.jpg') }}" alt="User" class="user-avatar">
+                                    <div class="exchange-arrow">
+                                        <i class="fa fa-exchange"></i>
+                                    </div>
+                                    <img src="{{ $otherUser->avatar ? asset('storage/' . $otherUser->avatar) : asset('assets/images/default-avatar.jpg') }}" alt="User" class="user-avatar">
+                                    <div class="user-actions mt-2">
+                                        <a href="{{ route('user.profile.public', ['user' => $otherUser->username]) }}" class="btn btn-sm btn-outline-primary">View Profile</a>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="navigator.clipboard.writeText('{{ url('/profile/' . $otherUser->username) }}'); alert('Profile link copied!')"><i class="fa fa-share"></i> Share</button>
+                                    </div>
                                 </div>
-                                <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="User" class="user-avatar">
+                                <div class="exchange-status">
+                                    <span class="status-badge {{ $exchange->status === 'pending' ? 'pending' : ($exchange->status === 'in_progress' ? 'active' : ($exchange->status === 'completed' ? 'completed' : 'cancelled')) }}">
+                                        {{ ucfirst(str_replace('_', ' ', $exchange->status)) }}
+                                    </span>
+                                </div>
                             </div>
-                            <div class="exchange-status">
-                                <span class="status-badge active">In Progress</span>
+                            <div class="exchange-content">
+                                <h4>{{ $exchange->title }}</h4>
+                                <p>{{ $exchange->description }}</p>
+                                <div class="exchange-details">
+                                    <div class="detail-item">
+                                        <i class="fa fa-clock-o"></i>
+                                        <span>{{ $exchange->created_at->diffForHumans() }}</span>
+                                    </div>
+                                    @if($exchange->estimated_hours)
+                                    <div class="detail-item">
+                                        <i class="fa fa-star"></i>
+                                        <span>Estimated: {{ $exchange->estimated_hours }} hours</span>
+                                    </div>
+                                    @endif
+                                    @if($exchange->start_date)
+                                    <div class="detail-item">
+                                        <i class="fa fa-calendar"></i>
+                                        <span>Started: {{ $exchange->start_date->format('M d, Y') }}</span>
+                                    </div>
+                                    @endif
+                                </div>
+                                <div class="exchange-tags">
+                                    <span class="tag">{{ $mySkill->name }}</span>
+                                    <span class="tag">{{ $otherUserSkill->name }}</span>
+                                </div>
+                            </div>
+                            <div class="exchange-actions">
+                                <a href="{{ route('user.exchanges.show', Crypt::encrypt($exchange->id)) }}" class="btn btn-primary btn-sm">
+                                    <i class="fa fa-eye"></i> View Details
+                                </a>
+
+                                @if($exchange->status === 'pending' && $exchange->participant_id === auth()->id())
+                                    <form action="{{ route('user.exchanges.accept', Crypt::encrypt($exchange->id)) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="fa fa-check"></i> Accept
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('user.exchanges.reject', Crypt::encrypt($exchange->id)) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-danger btn-sm swal-reject-btn">
+                                            <i class="fa fa-times"></i> Reject
+                                        </button>
+                                    </form>
+                                @endif
                             </div>
                         </div>
-                        <div class="exchange-content">
-                            <h4>Web Development for Logo Design</h4>
-                            <p>Building a responsive website in exchange for professional logo design services.</p>
-                            <div class="exchange-details">
-                                <div class="detail-item">
-                                    <i class="fa fa-clock-o"></i>
-                                    <span>Started 3 days ago</span>
-                                </div>
-                                <div class="detail-item">
-                                    <i class="fa fa-calendar"></i>
-                                    <span>Due: Dec 15, 2024</span>
-                                </div>
-                                <div class="detail-item">
-                                    <i class="fa fa-star"></i>
-                                    <span>Estimated: 20 hours</span>
-                                </div>
-                            </div>
-                            <div class="exchange-tags">
-                                <span class="tag">Web Development</span>
-                                <span class="tag">Logo Design</span>
-                            </div>
-                        </div>
-                        <div class="exchange-actions">
-                            <a href="#" class="btn btn-primary btn-sm">
-                                <i class="fa fa-eye"></i> View Details
-                            </a>
-                            <a href="#" class="btn btn-outline-primary btn-sm">
-                                <i class="fa fa-comment"></i> Message
+                    </div>
+                @empty
+                    <div class="col-12">
+                        <div class="text-center py-5">
+                            <i class="fa fa-exchange fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">No Exchanges Yet</h4>
+                            <p class="text-muted">You haven't participated in any skill exchanges yet.</p>
+                            <a href="{{ route('user.exchanges.discover') }}" class="btn btn-primary">
+                                <i class="fa fa-search"></i> Find Skills to Exchange
                             </a>
                         </div>
                     </div>
-                </div>
-
-                <!-- Exchange Card 2 -->
-                <div class="col-lg-6 col-xl-4 mb-4">
-                    <div class="exchange-card">
-                        <div class="exchange-header">
-                            <div class="exchange-users">
-                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="user-avatar">
-                                <div class="exchange-arrow">
-                                    <i class="fa fa-exchange"></i>
-                                </div>
-                                <img src="https://randomuser.me/api/portraits/women/28.jpg" alt="User" class="user-avatar">
-                            </div>
-                            <div class="exchange-status">
-                                <span class="status-badge pending">Pending</span>
-                            </div>
-                        </div>
-                        <div class="exchange-content">
-                            <h4>Content Writing for Social Media</h4>
-                            <p>Creating engaging blog content in exchange for social media management.</p>
-                            <div class="exchange-details">
-                                <div class="detail-item">
-                                    <i class="fa fa-clock-o"></i>
-                                    <span>Requested 1 day ago</span>
-                                </div>
-                                <div class="detail-item">
-                                    <i class="fa fa-calendar"></i>
-                                    <span>Due: Dec 20, 2024</span>
-                                </div>
-                                <div class="detail-item">
-                                    <i class="fa fa-star"></i>
-                                    <span>Estimated: 15 hours</span>
-                                </div>
-                            </div>
-                            <div class="exchange-tags">
-                                <span class="tag">Content Writing</span>
-                                <span class="tag">Social Media</span>
-                            </div>
-                        </div>
-                        <div class="exchange-actions">
-                            <a href="#" class="btn btn-success btn-sm">
-                                <i class="fa fa-check"></i> Accept
-                            </a>
-                            <a href="#" class="btn btn-danger btn-sm">
+                @endforelse
                                 <i class="fa fa-times"></i> Decline
                             </a>
                         </div>
@@ -451,6 +461,24 @@
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
+.unread-badge-small {
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.message-btn {
+    position: relative;
+}
+
 .exchange-header {
     display: flex;
     justify-content: space-between;
@@ -626,6 +654,8 @@
 }
 </style>
 
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Filter functionality
@@ -674,7 +704,28 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add your load more logic here
         console.log('Loading more exchanges...');
     });
+
+    document.querySelectorAll('.swal-reject-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const form = btn.closest('form');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Are you sure you want to reject this exchange?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, reject it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
 });
 </script>
+@endpush
 
 @endsection 

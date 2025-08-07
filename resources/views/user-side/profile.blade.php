@@ -44,11 +44,17 @@
                     </div>
                     <div class="col-auto">
                         <div class="profile-actions">
-                            <a href="{{ route('user.profile.edit') }}" class="btn btn-primary">
-                                <i class="fa fa-pencil"></i> Edit Profile
-                            </a>
+                            @php $isOwnProfile = auth()->check() && auth()->id() === $user->id; @endphp
+                            @if($isOwnProfile)
+                                <a href="{{ route('user.profile.edit') }}" class="btn btn-primary">
+                                    <i class="fa fa-pencil"></i> Edit Profile
+                                </a>
+                            @endif
                             <button class="btn btn-outline-primary" data-toggle="modal" data-target="#shareProfileModal">
                                 <i class="fa fa-share"></i> Share
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="navigator.clipboard.writeText('{{ url('/profile/' . $user->username) }}'); alert('Profile link copied!')">
+                                <i class="fa fa-link"></i> Copy Profile Link
                             </button>
                         </div>
                     </div>
@@ -200,9 +206,11 @@
                     <div class="profile-card mb-4">
                         <div class="card-header">
                             <h5><i class="fa fa-cogs"></i> My Skills</h5>
-                            <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addSkillModal">
-                                <i class="fa fa-plus"></i> Add
-                            </button>
+                            @if($isOwnProfile)
+                                <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addSkillModal">
+                                    <i class="fa fa-plus"></i> Add
+                                </button>
+                            @endif
                         </div>
                         <div class="card-body">
                             <div class="skills-container">
@@ -215,22 +223,26 @@
                                                 <i class="fa fa-check-circle verified-badge" title="Verified Skill"></i>
                                             @endif
                                         </div>
-                                        <div class="skill-actions">
-                                            <button class="btn btn-sm btn-link edit-skill" data-skill-id="{{ $skill->id }}">
-                                                <i class="fa fa-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-link delete-skill" data-skill-id="{{ $skill->id }}">
-                                                <i class="fa fa-trash"></i>
-                                            </button>
-                                        </div>
+                                        @if($isOwnProfile)
+                                            <div class="skill-actions">
+                                                <button class="btn btn-sm btn-link edit-skill" data-skill-id="{{ $skill->id }}">
+                                                    <i class="fa fa-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-link delete-skill" data-skill-id="{{ $skill->id }}">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        @endif
                                     </div>
                                 @empty
                                     <div class="empty-state">
                                         <i class="fa fa-cogs"></i>
                                         <p>No skills added yet</p>
-                                        <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addSkillModal">
-                                            Add Your First Skill
-                                        </button>
+                                        @if($isOwnProfile)
+                                            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addSkillModal">
+                                                Add Your First Skill
+                                            </button>
+                                        @endif
                                     </div>
                                 @endforelse
                             </div>
@@ -352,9 +364,11 @@
                             <div class="portfolio-section">
                                 <div class="portfolio-header">
                                     <h4>My Portfolio</h4>
-                                    <button class="btn btn-primary" data-toggle="modal" data-target="#addPortfolioModal">
-                                        <i class="fa fa-plus"></i> Add Item
-                                    </button>
+                                    @if($isOwnProfile)
+                                        <button class="btn btn-primary" data-toggle="modal" data-target="#addPortfolioModal">
+                                            <i class="fa fa-plus"></i> Add Item
+                                        </button>
+                                    @endif
                                 </div>
                                 <div class="portfolio-grid">
                                     @forelse($portfolioItems as $item)
@@ -365,9 +379,11 @@
                                                     <button class="btn btn-sm btn-light view-portfolio" data-item-id="{{ $item->id }}">
                                                         <i class="fa fa-eye"></i>
                                                     </button>
-                                                    <button class="btn btn-sm btn-danger delete-portfolio" data-item-id="{{ $item->id }}">
-                                                        <i class="fa fa-trash"></i>
-                                                    </button>
+                                                    @if($isOwnProfile)
+                                                        <button class="btn btn-sm btn-danger delete-portfolio" data-item-id="{{ $item->id }}">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    @endif
                                                 </div>
                                             </div>
                                             <div class="portfolio-content">
@@ -380,9 +396,11 @@
                                             <i class="fa fa-folder"></i>
                                             <h4>No Portfolio Items</h4>
                                             <p>Showcase your work by adding portfolio items.</p>
-                                            <button class="btn btn-primary" data-toggle="modal" data-target="#addPortfolioModal">
-                                                Add Your First Item
-                                            </button>
+                                            @if($isOwnProfile)
+                                                <button class="btn btn-primary" data-toggle="modal" data-target="#addPortfolioModal">
+                                                    Add Your First Item
+                                                </button>
+                                            @endif
                                         </div>
                                     @endforelse
                                 </div>
@@ -961,3 +979,49 @@
 }
 </style>
 @endsection
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Delete Skill
+    document.querySelectorAll('.delete-skill').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const skillId = btn.getAttribute('data-skill-id');
+            Swal.fire({
+                title: 'Delete Skill?',
+                text: 'Are you sure you want to delete this skill? This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // You may want to submit a form or make an AJAX request here
+                    window.location.href = `/dashboard/profile/skills/${skillId}`;
+                }
+            });
+        });
+    });
+    // Delete Portfolio Item
+    document.querySelectorAll('.delete-portfolio').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const itemId = btn.getAttribute('data-item-id');
+            Swal.fire({
+                title: 'Delete Portfolio Item?',
+                text: 'Are you sure you want to delete this portfolio item? This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // You may want to submit a form or make an AJAX request here
+                    window.location.href = `/dashboard/profile/portfolio/${itemId}`;
+                }
+            });
+        });
+    });
+});
+</script>

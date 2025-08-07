@@ -27,6 +27,8 @@ class Exchange extends Model
         'budget_range',
         'location_preference',
         'communication_preference',
+        'initiator_marked_done',
+        'participant_marked_done',
     ];
 
     protected $casts = [
@@ -35,6 +37,8 @@ class Exchange extends Model
         'is_featured' => 'boolean',
         'is_urgent' => 'boolean',
         'terms' => 'array',
+        'initiator_marked_done' => 'boolean',
+        'participant_marked_done' => 'boolean',
     ];
 
     /**
@@ -142,5 +146,22 @@ class Exchange extends Model
     public function isCompleted()
     {
         return $this->status === 'completed';
+    }
+
+    /**
+     * Check if both users have marked as done
+     */
+    public function bothMarkedDone()
+    {
+        return $this->initiator_marked_done && $this->participant_marked_done;
+    }
+    /**
+     * Check if the given user has marked as done
+     */
+    public function hasUserMarkedDone($userId)
+    {
+        if ($userId == $this->initiator_id) return $this->initiator_marked_done;
+        if ($userId == $this->participant_id) return $this->participant_marked_done;
+        return false;
     }
 }

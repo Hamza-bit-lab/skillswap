@@ -6,9 +6,12 @@ use App\Models\Exchange;
 use App\Models\Skill;
 use App\Models\User;
 use App\Models\Message;
+use App\Notifications\NewExchangeProposalNotification;
+use App\Notifications\ExchangeProposalStatusNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Crypt;
 
 class ExchangeController extends Controller
 {
@@ -115,6 +118,7 @@ class ExchangeController extends Controller
      */
     public function showSkill($id)
     {
+        $id = Crypt::decrypt($id);
         $skill = Skill::with(['user', 'reviews.reviewer', 'user.skills'])
             ->findOrFail($id);
 
@@ -203,7 +207,8 @@ class ExchangeController extends Controller
         ]);
 
         // Send notification to participant
-        // TODO: Implement notification system
+        $participant = $exchange->participant;
+        $participant->notify(new NewExchangeProposalNotification($exchange));
 
         return redirect()->route('user.exchanges.show', $exchange->id)
                         ->with('success', 'Exchange proposal sent successfully!');
@@ -251,6 +256,7 @@ class ExchangeController extends Controller
      */
     public function show($id)
     {
+        $id = Crypt::decrypt($id);
         $exchange = Exchange::with([
             'initiator', 'participant', 'initiatorSkill', 'participantSkill',
             'messages.sender', 'reviews.reviewer'
@@ -271,6 +277,7 @@ class ExchangeController extends Controller
      */
     public function accept($id)
     {
+        $id = Crypt::decrypt($id);
         $exchange = Exchange::findOrFail($id);
 
         // Ensure user is the participant
@@ -288,7 +295,8 @@ class ExchangeController extends Controller
         ]);
 
         // Send notification to initiator
-        // TODO: Implement notification system
+        $initiator = $exchange->initiator;
+        $initiator->notify(new ExchangeProposalStatusNotification($exchange, 'accepted'));
 
         return back()->with('success', 'Exchange accepted! You can now start working together.');
     }
@@ -298,6 +306,7 @@ class ExchangeController extends Controller
      */
     public function reject($id)
     {
+        $id = Crypt::decrypt($id);
         $exchange = Exchange::findOrFail($id);
 
         // Ensure user is the participant
@@ -312,7 +321,8 @@ class ExchangeController extends Controller
         $exchange->update(['status' => 'cancelled']);
 
         // Send notification to initiator
-        // TODO: Implement notification system
+        $initiator = $exchange->initiator;
+        $initiator->notify(new ExchangeProposalStatusNotification($exchange, 'rejected'));
 
         return redirect()->route('user.exchanges.my-exchanges')
                         ->with('success', 'Exchange proposal rejected.');
@@ -323,6 +333,7 @@ class ExchangeController extends Controller
      */
     public function complete($id)
     {
+        $id = Crypt::decrypt($id);
         $exchange = Exchange::findOrFail($id);
 
         // Ensure user is part of this exchange
@@ -347,6 +358,7 @@ class ExchangeController extends Controller
      */
     public function cancel($id)
     {
+        $id = Crypt::decrypt($id);
         $exchange = Exchange::findOrFail($id);
 
         // Ensure user is part of this exchange
@@ -373,6 +385,7 @@ class ExchangeController extends Controller
             'message' => 'required|string|max:1000',
         ]);
 
+        $id = Crypt::decrypt($id);
         $exchange = Exchange::findOrFail($id);
 
         // Ensure user is part of this exchange
@@ -408,6 +421,98 @@ class ExchangeController extends Controller
             ->get();
 
         return response()->json($recommendations);
+    }
+
+    /**
+     * Show quick exchange modal
+     */
+    public function showQuickExchange($skillId)
+    {
+        $skillId = Crypt::decrypt($skillId);
+        $targetSkill = Skill::with('user')->findOrFail($skillId);
+        $userSkills = Auth::user()->skills;
+
+        $html = view('user-side.exchanges.partials.quick-exchange-modal', compact('targetSkill', 'userSkills'))->render();
+
+        return response()->json([
+            'success' => true,
+            'html' => $html
+        ]);
+    }
+
+    /**
+     * Store quick exchange
+     */
+    public function storeQuickExchange(Request $request)
+    {
+        try {
+            $request->validate([
+                'target_skill_id' => 'required|exists:skills,id',
+                'user_skill_id' => 'required|exists:skills,id',
+                'title' => 'required|string|max:255',
+                'description' => 'required|string|min:20',
+                'estimated_hours' => 'nullable|integer|min:1|max:200',
+                'communication_preference' => 'nullable|string|in:chat,video,email,phone',
+            ]);
+
+            $targetSkill = Skill::findOrFail($request->target_skill_id);
+            $userSkill = Skill::findOrFail($request->user_skill_id);
+
+            if ($userSkill->user_id !== Auth::id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You can only offer your own skills.'
+                ], 400);
+            }
+
+            if ($targetSkill->user_id === Auth::id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You cannot exchange with yourself.'
+                ], 400);
+            }
+
+            $existingExchange = Exchange::where(function($query) use ($targetSkill) {
+                $query->where('initiator_id', Auth::id())
+                      ->where('participant_id', $targetSkill->user_id)
+                      ->orWhere('initiator_id', $targetSkill->user_id)
+                      ->where('participant_id', Auth::id());
+            })->whereIn('status', ['pending', 'in_progress'])->first();
+
+            if ($existingExchange) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You already have an active exchange with this user.'
+                ], 400);
+            }
+
+            $exchange = Exchange::create([
+                'initiator_id' => Auth::id(),
+                'participant_id' => $targetSkill->user_id,
+                'initiator_skill_id' => $userSkill->id,
+                'participant_skill_id' => $targetSkill->id,
+                'title' => $request->title,
+                'description' => $request->description,
+                'estimated_hours' => $request->estimated_hours,
+                'communication_preference' => $request->communication_preference,
+                'status' => 'pending',
+            ]);
+
+            $participant = $exchange->participant;
+            $participant->notify(new NewExchangeProposalNotification($exchange));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Exchange proposal sent successfully!',
+                'redirect' => route('user.exchanges.show', \Illuminate\Support\Facades\Crypt::encrypt($exchange->id))
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error creating exchange. Please try again.'
+            ], 500);
+        }
     }
 
     /**
@@ -465,5 +570,29 @@ class ExchangeController extends Controller
         }
 
         return view('user-side.exchanges.search', compact('skills'));
+    }
+
+    /**
+     * Mark as done for initiator or participant
+     */
+    public function markAsDone($id)
+    {
+        $id = \Illuminate\Support\Facades\Crypt::decrypt($id);
+        $exchange = \App\Models\Exchange::findOrFail($id);
+        $userId = \Illuminate\Support\Facades\Auth::id();
+
+        // Only allow if in progress and user is part of exchange
+        if ($exchange->status !== 'in_progress' || ($exchange->initiator_id !== $userId && $exchange->participant_id !== $userId)) {
+            abort(403);
+        }
+
+        if ($userId == $exchange->initiator_id) {
+            $exchange->initiator_marked_done = true;
+        } elseif ($userId == $exchange->participant_id) {
+            $exchange->participant_marked_done = true;
+        }
+        $exchange->save();
+
+        return back()->with('success', 'Marked as done!');
     }
 } 
