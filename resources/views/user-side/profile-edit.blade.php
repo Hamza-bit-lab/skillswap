@@ -8,15 +8,15 @@
 <div class="profile-edit-container">
     <!-- Header Section -->
     <div class="edit-header">
-        <div class="container-fluid">
-            <div class="row align-items-center">
-                <div class="col">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-info">
                     <h1 class="edit-title">
                         <i class="fa fa-pencil"></i> Edit Profile
                     </h1>
                     <p class="edit-subtitle">Update your information and preferences</p>
                 </div>
-                <div class="col-auto">
+                <div class="header-actions">
                     <a href="{{ route('user.profile') }}" class="btn btn-outline-light">
                         <i class="fa fa-arrow-left"></i> Back to Profile
                     </a>
@@ -28,15 +28,17 @@
     <!-- Main Content -->
     <div class="edit-content">
         <div class="container-fluid">
-            <div class="row">
+            <div class="edit-layout">
                 <!-- Avatar Section -->
-                <div class="col-lg-4">
-                    <div class="avatar-section">
-                        <div class="avatar-card">
-                            <div class="card-header">
-                                <h5><i class="fa fa-camera"></i> Profile Picture</h5>
-                            </div>
-                            <div class="card-body text-center">
+                <div class="avatar-section">
+                    <div class="edit-card">
+                        <div class="card-header">
+                            <h3 class="section-title">
+                                <i class="fa fa-camera"></i> Profile Picture
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="avatar-content">
                                 <div class="current-avatar-container">
                                     <img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('assets/images/default-avatar.jpg') }}" 
                                          alt="{{ Auth::user()->name }}" 
@@ -57,7 +59,7 @@
                                            style="display: none;">
                                 </form>
                                 
-                                <div class="avatar-actions mt-3">
+                                <div class="avatar-actions">
                                     <button type="button" class="btn btn-primary" id="changeAvatarBtn">
                                         <i class="fa fa-upload"></i> Change Avatar
                                     </button>
@@ -68,22 +70,26 @@
                                     @endif
                                 </div>
                                 
-                                <small class="text-muted mt-2 d-block">
+                                <small class="text-muted">
                                     JPEG or PNG, max 3MB, min 100x100px
                                 </small>
                                 
-                                <div id="avatarProgress" class="progress mt-3" style="display: none;">
+                                <div id="avatarProgress" class="progress" style="display: none;">
                                     <div class="progress-bar" role="progressbar" style="width: 0%"></div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Quick Stats -->
-                        <div class="stats-card mt-4">
-                            <div class="card-header">
-                                <h5><i class="fa fa-chart-bar"></i> Profile Stats</h5>
-                            </div>
-                            <div class="card-body">
+                    <!-- Quick Stats -->
+                    <div class="edit-card">
+                        <div class="card-header">
+                            <h3 class="section-title">
+                                <i class="fa fa-chart-bar"></i> Profile Stats
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="stats-list">
                                 <div class="stat-item">
                                     <div class="stat-icon">
                                         <i class="fa fa-star"></i>
@@ -117,110 +123,104 @@
                 </div>
 
                 <!-- Form Section -->
-                <div class="col-lg-8">
+                <div class="form-section">
                     <form action="{{ route('user.profile.update') }}" method="POST" id="profileForm" class="profile-form">
                         @csrf
                         @method('PUT')
 
                         <!-- Basic Information Card -->
-                        <div class="form-card">
+                        <div class="edit-card">
                             <div class="card-header">
-                                <h5><i class="fa fa-user"></i> Basic Information</h5>
+                                <h3 class="section-title">
+                                    <i class="fa fa-user"></i> Basic Information
+                                </h3>
                             </div>
                             <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="name" class="form-label">
-                                                <i class="fa fa-user"></i> Full Name <span class="required">*</span>
-                                            </label>
-                                            <input type="text" 
-                                                   class="form-control @error('name') is-invalid @enderror" 
-                                                   id="name" 
-                                                   name="name" 
-                                                   value="{{ old('name', Auth::user()->name) }}" 
-                                                   required>
-                                            @error('name')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="name" class="form-label">
+                                            <i class="fa fa-user"></i> Full Name <span class="required">*</span>
+                                        </label>
+                                        <input type="text" 
+                                               class="form-control @error('name') is-invalid @enderror" 
+                                               id="name" 
+                                               name="name" 
+                                               value="{{ old('name', Auth::user()->name) }}" 
+                                               required>
+                                        @error('name')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="username" class="form-label">
-                                                <i class="fa fa-at"></i> Username <span class="required">*</span>
-                                            </label>
-                                            <input type="text" 
-                                                   class="form-control @error('username') is-invalid @enderror" 
-                                                   id="username" 
-                                                   name="username" 
-                                                   value="{{ old('username', Auth::user()->username) }}" 
-                                                   required>
-                                            @error('username')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="username" class="form-label">
+                                            <i class="fa fa-at"></i> Username <span class="required">*</span>
+                                        </label>
+                                        <input type="text" 
+                                               class="form-control @error('username') is-invalid @enderror" 
+                                               id="username" 
+                                               name="username" 
+                                               value="{{ old('username', Auth::user()->username) }}" 
+                                               required>
+                                        @error('username')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="email" class="form-label">
-                                                <i class="fa fa-envelope"></i> Email Address <span class="required">*</span>
-                                            </label>
-                                            <input type="email" 
-                                                   class="form-control @error('email') is-invalid @enderror" 
-                                                   id="email" 
-                                                   name="email" 
-                                                   value="{{ old('email', Auth::user()->email) }}" 
-                                                   required>
-                                            @error('email')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="email" class="form-label">
+                                            <i class="fa fa-envelope"></i> Email Address <span class="required">*</span>
+                                        </label>
+                                        <input type="email" 
+                                               class="form-control @error('email') is-invalid @enderror" 
+                                               id="email" 
+                                               name="email" 
+                                               value="{{ old('email', Auth::user()->email) }}" 
+                                               required>
+                                        @error('email')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="phone" class="form-label">
-                                                <i class="fa fa-phone"></i> Phone Number
-                                            </label>
-                                            <input type="tel" 
-                                                   class="form-control @error('phone') is-invalid @enderror" 
-                                                   id="phone" 
-                                                   name="phone" 
-                                                   value="{{ old('phone', Auth::user()->phone) }}"
-                                                   placeholder="+1 (555) 123-4567">
-                                            @error('phone')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="phone" class="form-label">
+                                            <i class="fa fa-phone"></i> Phone Number
+                                        </label>
+                                        <input type="tel" 
+                                               class="form-control @error('phone') is-invalid @enderror" 
+                                               id="phone" 
+                                               name="phone" 
+                                               value="{{ old('phone', Auth::user()->phone) }}"
+                                               placeholder="+1 (555) 123-4567">
+                                        @error('phone')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="location" class="form-label">
-                                                <i class="fa fa-map-marker"></i> Location
-                                            </label>
-                                            <input type="text" 
-                                                   class="form-control @error('location') is-invalid @enderror" 
-                                                   id="location" 
-                                                   name="location" 
-                                                   value="{{ old('location', Auth::user()->location) }}"
-                                                   placeholder="City, Country">
-                                            @error('location')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                                    <div class="form-group full-width">
+                                        <label for="location" class="form-label">
+                                            <i class="fa fa-map-marker"></i> Location
+                                        </label>
+                                        <input type="text" 
+                                               class="form-control @error('location') is-invalid @enderror" 
+                                               id="location" 
+                                               name="location" 
+                                               value="{{ old('location', Auth::user()->location) }}"
+                                               placeholder="City, Country">
+                                        @error('location')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- About Me Card -->
-                        <div class="form-card">
+                        <div class="edit-card">
                             <div class="card-header">
-                                <h5><i class="fa fa-info-circle"></i> About Me</h5>
+                                <h3 class="section-title">
+                                    <i class="fa fa-info-circle"></i> About Me
+                                </h3>
                             </div>
                             <div class="card-body">
                                 <div class="form-group">
@@ -243,79 +243,73 @@
                         </div>
 
                         <!-- Social Links Card -->
-                        <div class="form-card">
+                        <div class="edit-card">
                             <div class="card-header">
-                                <h5><i class="fa fa-share-alt"></i> Social Links</h5>
+                                <h3 class="section-title">
+                                    <i class="fa fa-share-alt"></i> Social Links
+                                </h3>
                                 <small class="text-muted">Connect your social profiles</small>
                             </div>
                             <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="website" class="form-label">
-                                                <i class="fa fa-globe"></i> Website
-                                            </label>
-                                            <input type="url" 
-                                                   class="form-control @error('website') is-invalid @enderror" 
-                                                   id="website" 
-                                                   name="website" 
-                                                   value="{{ old('website', Auth::user()->website) }}"
-                                                   placeholder="https://yourwebsite.com">
-                                            @error('website')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="website" class="form-label">
+                                            <i class="fa fa-globe"></i> Website
+                                        </label>
+                                        <input type="url" 
+                                               class="form-control @error('website') is-invalid @enderror" 
+                                               id="website" 
+                                               name="website" 
+                                               value="{{ old('website', Auth::user()->website) }}"
+                                               placeholder="https://yourwebsite.com">
+                                        @error('website')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="linkedin" class="form-label">
-                                                <i class="fa fa-linkedin"></i> LinkedIn
-                                            </label>
-                                            <input type="url" 
-                                                   class="form-control @error('linkedin') is-invalid @enderror" 
-                                                   id="linkedin" 
-                                                   name="linkedin" 
-                                                   value="{{ old('linkedin', Auth::user()->linkedin) }}"
-                                                   placeholder="https://linkedin.com/in/username">
-                                            @error('linkedin')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="linkedin" class="form-label">
+                                            <i class="fa fa-linkedin"></i> LinkedIn
+                                        </label>
+                                        <input type="url" 
+                                               class="form-control @error('linkedin') is-invalid @enderror" 
+                                               id="linkedin" 
+                                               name="linkedin" 
+                                               value="{{ old('linkedin', Auth::user()->linkedin) }}"
+                                               placeholder="https://linkedin.com/in/username">
+                                        @error('linkedin')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="github" class="form-label">
-                                                <i class="fa fa-github"></i> GitHub
-                                            </label>
-                                            <input type="url" 
-                                                   class="form-control @error('github') is-invalid @enderror" 
-                                                   id="github" 
-                                                   name="github" 
-                                                   value="{{ old('github', Auth::user()->github) }}"
-                                                   placeholder="https://github.com/username">
-                                            @error('github')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="github" class="form-label">
+                                            <i class="fa fa-github"></i> GitHub
+                                        </label>
+                                        <input type="url" 
+                                               class="form-control @error('github') is-invalid @enderror" 
+                                               id="github" 
+                                               name="github" 
+                                               value="{{ old('github', Auth::user()->github) }}"
+                                               placeholder="https://github.com/username">
+                                        @error('github')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="twitter" class="form-label">
-                                                <i class="fa fa-twitter"></i> Twitter
-                                            </label>
-                                            <input type="url" 
-                                                   class="form-control @error('twitter') is-invalid @enderror" 
-                                                   id="twitter" 
-                                                   name="twitter" 
-                                                   value="{{ old('twitter', Auth::user()->twitter) }}"
-                                                   placeholder="https://twitter.com/username">
-                                            @error('twitter')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="twitter" class="form-label">
+                                            <i class="fa fa-twitter"></i> Twitter
+                                        </label>
+                                        <input type="url" 
+                                               class="form-control @error('twitter') is-invalid @enderror" 
+                                               id="twitter" 
+                                               name="twitter" 
+                                               value="{{ old('twitter', Auth::user()->twitter) }}"
+                                               placeholder="https://twitter.com/username">
+                                        @error('twitter')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -323,13 +317,13 @@
 
                         <!-- Action Buttons -->
                         <div class="form-actions">
-                            <button type="submit" class="btn btn-primary btn-lg">
+                            <button type="submit" class="btn btn-primary">
                                 <i class="fa fa-save"></i> Save Changes
                             </button>
-                            <a href="{{ route('user.profile') }}" class="btn btn-outline-secondary btn-lg">
+                            <a href="{{ route('user.profile') }}" class="btn btn-outline-secondary">
                                 <i class="fa fa-times"></i> Cancel
                             </a>
-                            <button type="button" class="btn btn-outline-warning btn-lg" id="resetForm">
+                            <button type="button" class="btn btn-outline-warning" id="resetForm">
                                 <i class="fa fa-undo"></i> Reset
                             </button>
                         </div>
@@ -363,70 +357,114 @@
 /* Profile Edit Container */
 .profile-edit-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 }
 
 /* Header Section */
 .edit-header {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     padding: 40px 0;
     color: #fff;
 }
 
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-info {
+    flex: 1;
+}
+
 .edit-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin: 0;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .edit-subtitle {
-    font-size: 1.1rem;
-    opacity: 0.9;
-    margin: 5px 0 0;
+    font-size: 1rem;
+    color: rgba(255,255,255,0.9);
+    margin: 0;
+}
+
+.header-actions {
+    flex-shrink: 0;
+}
+
+.btn-outline-light {
+    color: #fff;
+    border-color: #fff;
+    background: transparent;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-light:hover {
+    background: #fff;
+    color: #4B9CD3;
 }
 
 /* Content Section */
 .edit-content {
     padding: 40px 0;
-    background: #f8f9fa;
-    min-height: calc(100vh - 140px);
+    background: transparent;
 }
 
-/* Avatar Section */
-.avatar-section .avatar-card,
-.avatar-section .stats-card,
-.form-card {
-    background: #fff;
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+.edit-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 40px;
+}
+
+/* Edit Cards */
+.edit-card {
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     overflow: hidden;
     margin-bottom: 30px;
+    border: 1px solid #e9ecef;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.avatar-card .card-header,
-.stats-card .card-header,
-.form-card .card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.edit-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(75, 156, 211, 0.15);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     color: #fff;
     padding: 20px;
     border: none;
 }
 
-.avatar-card .card-header h5,
-.stats-card .card-header h5,
-.form-card .card-header h5 {
-    margin: 0;
+.section-title {
+    font-size: 1.2rem;
     font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.avatar-card .card-body,
-.stats-card .card-body,
-.form-card .card-body {
-    padding: 30px;
+.section-title i {
+    width: 16px;
 }
 
-/* Current Avatar */
+.card-body {
+    padding: 25px;
+}
+
+/* Avatar Section */
+.avatar-content {
+    text-align: center;
+}
+
 .current-avatar-container {
     position: relative;
     display: inline-block;
@@ -434,13 +472,13 @@
 }
 
 .current-avatar {
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    border: 4px solid #fff;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    transition: all 0.3s ease;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
 }
 
 .avatar-overlay {
@@ -449,7 +487,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0,0,0,0.7);
+    background: rgba(75, 156, 211, 0.9);
     border-radius: 50%;
     display: flex;
     flex-direction: column;
@@ -457,7 +495,7 @@
     justify-content: center;
     color: #fff;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.2s ease;
     cursor: pointer;
 }
 
@@ -466,7 +504,7 @@
 }
 
 .avatar-overlay i {
-    font-size: 24px;
+    font-size: 20px;
     margin-bottom: 5px;
 }
 
@@ -474,31 +512,43 @@
     display: flex;
     gap: 10px;
     justify-content: center;
+    margin-bottom: 15px;
     flex-wrap: wrap;
 }
 
-/* Stats Card */
+/* Stats List */
+.stats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
 .stat-item {
     display: flex;
     align-items: center;
-    padding: 15px 0;
-    border-bottom: 1px solid #eee;
+    padding: 15px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    border-radius: 6px;
+    border-left: 3px solid #4B9CD3;
+    transition: all 0.2s ease;
 }
 
-.stat-item:last-child {
-    border-bottom: none;
+.stat-item:hover {
+    transform: translateX(3px);
+    box-shadow: 0 2px 8px rgba(75, 156, 211, 0.15);
 }
 
 .stat-icon {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     color: #fff;
     margin-right: 15px;
+    font-size: 14px;
 }
 
 .stat-info {
@@ -507,13 +557,13 @@
 }
 
 .stat-value {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 700;
-    color: #333;
+    color: #4B9CD3;
 }
 
 .stat-label {
-    color: #666;
+    color: #6c757d;
     font-size: 0.9rem;
 }
 
@@ -524,9 +574,19 @@
     gap: 30px;
 }
 
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
 .form-label {
     font-weight: 600;
-    color: #333;
+    color: #212529;
     margin-bottom: 8px;
     display: flex;
     align-items: center;
@@ -534,7 +594,7 @@
 }
 
 .form-label i {
-    color: #667eea;
+    color: #4B9CD3;
     width: 16px;
 }
 
@@ -544,15 +604,17 @@
 
 .form-control {
     border: 2px solid #e9ecef;
-    border-radius: 10px;
-    padding: 12px 15px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    background: #fff;
 }
 
 .form-control:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    border-color: #4B9CD3;
+    box-shadow: 0 0 0 0.2rem rgba(75, 156, 211, 0.25);
+    outline: none;
 }
 
 .form-control.is-invalid {
@@ -569,7 +631,7 @@
 /* Textarea Character Count */
 #bioCount {
     font-weight: 600;
-    color: #667eea;
+    color: #4B9CD3;
 }
 
 /* Action Buttons */
@@ -581,33 +643,76 @@
     flex-wrap: wrap;
 }
 
-.form-actions .btn {
-    border-radius: 25px;
-    padding: 12px 30px;
-    font-weight: 600;
-    transition: all 0.3s ease;
+.btn-primary {
+    background: #4B9CD3;
+    border-color: #4B9CD3;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
-.form-actions .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
+.btn-primary:hover {
+    background: #3a7bb3;
+    border-color: #3a7bb3;
+    transform: translateY(-1px);
 }
 
-.form-actions .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+.btn-outline-secondary {
+    color: #6c757d;
+    border-color: #6c757d;
+    background: transparent;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-secondary:hover {
+    background: #6c757d;
+    border-color: #6c757d;
+    color: #fff;
+}
+
+.btn-outline-warning {
+    color: #ffc107;
+    border-color: #ffc107;
+    background: transparent;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-warning:hover {
+    background: #ffc107;
+    border-color: #ffc107;
+    color: #212529;
+}
+
+.btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+    background: transparent;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-danger:hover {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
 }
 
 /* Progress Bar */
 .progress {
-    height: 8px;
-    border-radius: 10px;
+    height: 6px;
+    border-radius: 3px;
     background: #e9ecef;
+    margin-top: 15px;
 }
 
 .progress-bar {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 10px;
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
+    border-radius: 3px;
     transition: width 0.3s ease;
 }
 
@@ -618,19 +723,29 @@
     right: 20px;
     z-index: 1050;
     min-width: 300px;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .edit-title {
-        font-size: 2rem;
+    .edit-layout {
+        grid-template-columns: 1fr;
+        gap: 30px;
     }
     
-    .current-avatar {
-        width: 120px;
-        height: 120px;
+    .edit-title {
+        font-size: 1.5rem;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
     }
     
     .form-actions {
@@ -659,10 +774,13 @@
         padding: 20px 0;
     }
     
-    .avatar-card .card-body,
-    .stats-card .card-body,
-    .form-card .card-body {
+    .card-body {
         padding: 20px;
+    }
+    
+    .current-avatar {
+        width: 100px;
+        height: 100px;
     }
 }
 </style>
@@ -811,7 +929,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (count > 800) {
             bioCount.style.color = '#ffc107';
         } else {
-            bioCount.style.color = '#667eea';
+            bioCount.style.color = '#4B9CD3';
         }
     });
 

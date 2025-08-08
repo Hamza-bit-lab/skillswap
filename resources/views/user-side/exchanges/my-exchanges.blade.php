@@ -5,27 +5,19 @@
 @section('content')
 <div class="my-exchanges-container">
     <!-- Header Section -->
-    <div class="exchanges-header-section">
-        <div class="header-background">
-            <div class="header-overlay"></div>
-        </div>
-        
-        <div class="exchanges-header-content">
-            <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col-lg-8">
-                        <div class="header-content">
-                            <h1 class="header-title">My Exchanges</h1>
-                            <p class="header-subtitle">Manage and track all your skill exchanges</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="header-actions">
-                            <a href="{{ route('user.exchanges.discover') }}" class="btn btn-primary btn-lg">
-                                <i class="fa fa-search"></i> Find New Skills
-                            </a>
-                        </div>
-                    </div>
+    <div class="exchanges-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-info">
+                    <h1 class="header-title">
+                        <i class="fa fa-exchange"></i> My Exchanges
+                    </h1>
+                    <p class="header-subtitle">Manage and track all your skill exchanges</p>
+                </div>
+                <div class="header-actions">
+                    <a href="{{ route('user.exchanges.discover') }}" class="btn btn-primary">
+                        <i class="fa fa-search"></i> Find New Skills
+                    </a>
                 </div>
             </div>
         </div>
@@ -34,49 +26,41 @@
     <!-- Stats Section -->
     <div class="stats-section">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-3 col-md-6">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fa fa-exchange"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>{{ $stats['total'] }}</h3>
-                            <p>Total Exchanges</p>
-                        </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fa fa-exchange"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ $stats['total'] }}</h3>
+                        <p>Total Exchanges</p>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fa fa-clock-o"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>{{ $stats['pending'] }}</h3>
-                            <p>Pending</p>
-                        </div>
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fa fa-clock-o"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ $stats['pending'] }}</h3>
+                        <p>Pending</p>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fa fa-play"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>{{ $stats['in_progress'] }}</h3>
-                            <p>In Progress</p>
-                        </div>
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fa fa-play"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ $stats['in_progress'] }}</h3>
+                        <p>In Progress</p>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fa fa-check"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>{{ $stats['completed'] }}</h3>
-                            <p>Completed</p>
-                        </div>
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fa fa-check"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ $stats['completed'] }}</h3>
+                        <p>Completed</p>
                     </div>
                 </div>
             </div>
@@ -261,122 +245,112 @@
 /* My Exchanges Container */
 .my-exchanges-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 }
 
 /* Header Section */
-.exchanges-header-section {
-    position: relative;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 60px 0 40px;
-    margin-bottom: 30px;
-}
-
-.header-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1974&q=80') center/cover;
-}
-
-.header-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
-}
-
-.exchanges-header-content {
-    position: relative;
-    z-index: 2;
-}
-
-.header-content {
+.exchanges-header {
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
+    padding: 40px 0;
     color: #fff;
 }
 
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-info {
+    flex: 1;
+}
+
 .header-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin: 0;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .header-subtitle {
-    font-size: 1.2rem;
-    opacity: 0.9;
-    margin: 10px 0 0;
+    font-size: 1rem;
+    color: rgba(255,255,255,0.9);
+    margin: 0;
 }
 
-.header-actions .btn {
-    border-radius: 25px;
-    padding: 12px 25px;
-    font-weight: 600;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+.header-actions {
+    flex-shrink: 0;
 }
 
 /* Stats Section */
 .stats-section {
-    margin-bottom: 30px;
-}
-
-.stat-card {
     background: #fff;
-    border-radius: 15px;
-    padding: 25px;
-    text-align: center;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease;
-    height: 100%;
-    border: 1px solid rgba(255,255,255,0.1);
+    padding: 30px 0;
+    border-bottom: 1px solid #e9ecef;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-.stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    border: 1px solid #e9ecef;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(75, 156, 211, 0.2);
 }
 
 .stat-icon {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 15px;
     color: #fff;
-    font-size: 24px;
+    font-size: 20px;
 }
 
 .stat-content h3 {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 700;
-    margin: 0;
-    color: #333;
+    margin: 0 0 5px 0;
+    color: #4B9CD3;
 }
 
 .stat-content p {
-    color: #666;
-    margin: 5px 0;
+    color: #6c757d;
+    margin: 0;
     font-weight: 500;
 }
 
 /* Filter Section */
 .filter-section {
-    margin-bottom: 30px;
+    background: #fff;
+    padding: 20px 0;
+    border-bottom: 1px solid #e9ecef;
 }
 
 .filter-card {
-    background: #fff;
-    border-radius: 15px;
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     border: 1px solid #e9ecef;
 }
 
@@ -390,31 +364,32 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 12px 20px;
+    padding: 10px 16px;
     background: #f8f9fa;
-    border-radius: 25px;
-    color: #495057;
+    border-radius: 20px;
+    color: #6c757d;
     text-decoration: none;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    border: 1px solid #e9ecef;
     font-weight: 500;
+    font-size: 0.9rem;
 }
 
 .filter-tab:hover {
     background: #e9ecef;
     color: #495057;
     text-decoration: none;
-    transform: translateY(-2px);
+    transform: translateY(-1px);
 }
 
 .filter-tab.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     color: #fff;
     border-color: transparent;
 }
 
 .filter-tab i {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 .filter-tab .badge {
@@ -427,33 +402,31 @@
 
 /* Exchanges List Section */
 .exchanges-list-section {
-    background: #f8f9fa;
-    min-height: 60vh;
-    padding: 30px 0;
+    background: transparent;
+    padding: 40px 0;
 }
 
 .exchanges-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 25px;
     margin-bottom: 40px;
 }
 
 .exchange-card {
-    background: #fff;
-    border-radius: 15px;
-    padding: 30px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     border: 1px solid #e9ecef;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     position: relative;
-    overflow: visible;
-    min-height: 300px;
+    overflow: hidden;
 }
 
 .exchange-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(75, 156, 211, 0.15);
 }
 
 .exchange-card::before {
@@ -462,8 +435,8 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    height: 3px;
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
 }
 
 /* Exchange Header */
@@ -488,8 +461,8 @@
 }
 
 .user-avatar {
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #fff;
@@ -497,21 +470,21 @@
 }
 
 .user-details h6 {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: #333;
+    color: #212529;
     margin: 0 0 3px;
 }
 
 .skill-name {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: #6c757d;
     display: block;
 }
 
 .exchange-arrow {
-    color: #667eea;
-    font-size: 16px;
+    color: #4B9CD3;
+    font-size: 14px;
 }
 
 .exchange-status {
@@ -519,9 +492,9 @@
 }
 
 .status-badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.75rem;
     font-weight: 600;
 }
 
@@ -537,27 +510,25 @@
 }
 
 .exchange-title {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
-    color: #333;
-    margin: 0 0 15px;
+    color: #212529;
+    margin: 0 0 12px;
     line-height: 1.3;
-    word-wrap: break-word;
 }
 
 .exchange-description {
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 20px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    color: #6c757d;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
 }
 
 .exchange-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 15px;
 }
 
 .meta-item {
@@ -565,12 +536,12 @@
     align-items: center;
     gap: 5px;
     color: #6c757d;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
 }
 
 .meta-item i {
-    width: 14px;
-    color: #667eea;
+    width: 12px;
+    color: #4B9CD3;
 }
 
 .exchange-role {
@@ -581,9 +552,9 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 6px 12px;
-    border-radius: 15px;
-    font-size: 0.8rem;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
     font-weight: 500;
 }
 
@@ -600,17 +571,17 @@
 /* Exchange Actions */
 .exchange-actions {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 .exchange-actions .btn {
-    border-radius: 20px;
-    padding: 10px 18px;
-    font-size: 0.85rem;
+    border-radius: 15px;
+    padding: 8px 14px;
+    font-size: 0.8rem;
     font-weight: 500;
-    min-width: 100px;
+    min-width: 90px;
     white-space: nowrap;
 }
 
@@ -618,25 +589,87 @@
     margin: 0;
 }
 
+/* Buttons */
+.btn-primary {
+    background: #4B9CD3;
+    border-color: #4B9CD3;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: #3a7bb3;
+    border-color: #3a7bb3;
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background: #28a745;
+    border-color: #28a745;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-success:hover {
+    background: #218838;
+    border-color: #218838;
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background: #dc3545;
+    border-color: #dc3545;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+    border-color: #c82333;
+    transform: translateY(-1px);
+}
+
+.btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+    background: transparent;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-danger:hover {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
+}
+
 /* Empty State */
 .empty-state {
     text-align: center;
-    padding: 80px 20px;
-    color: #666;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
 }
 
 .empty-icon {
-    font-size: 4rem;
-    color: #ddd;
+    font-size: 3rem;
+    color: #dee2e6;
     margin-bottom: 20px;
 }
 
 .empty-state h4 {
-    color: #333;
+    color: #212529;
     margin-bottom: 10px;
 }
 
 .empty-state p {
+    color: #6c757d;
     margin-bottom: 20px;
 }
 
@@ -653,37 +686,34 @@
 }
 
 .page-link {
-    border-radius: 10px;
-    border: 2px solid #e9ecef;
-    color: #667eea;
-    padding: 10px 15px;
-    transition: all 0.3s ease;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    color: #4B9CD3;
+    padding: 8px 12px;
+    transition: all 0.2s ease;
 }
 
 .page-link:hover {
-    background: #667eea;
-    border-color: #667eea;
+    background: #4B9CD3;
+    border-color: #4B9CD3;
     color: #fff;
 }
 
 .page-item.active .page-link {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     border-color: transparent;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .header-title {
-        font-size: 2rem;
-    }
-    
-    .header-actions {
+    .header-content {
+        flex-direction: column;
+        gap: 20px;
         text-align: center;
-        margin-top: 20px;
     }
     
-    .header-actions .btn {
-        width: 100%;
+    .header-title {
+        font-size: 1.5rem;
     }
     
     .exchanges-grid {
@@ -692,8 +722,7 @@
     }
     
     .exchange-card {
-        padding: 25px;
-        min-height: auto;
+        padding: 20px;
     }
     
     .exchange-header {
@@ -732,11 +761,16 @@
         width: 100%;
         min-width: auto;
     }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
 }
 
 @media (max-width: 576px) {
-    .exchanges-header-section {
-        padding: 40px 0 30px;
+    .exchanges-header {
+        padding: 30px 0;
     }
     
     .exchanges-list-section {
@@ -744,25 +778,29 @@
     }
     
     .exchange-card {
-        padding: 20px;
+        padding: 15px;
     }
     
     .header-title {
-        font-size: 1.8rem;
+        font-size: 1.3rem;
     }
     
-    .stat-card {
-        padding: 20px;
+    .stat-item {
+        padding: 15px;
     }
     
     .stat-icon {
-        width: 50px;
-        height: 50px;
-        font-size: 20px;
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
     }
     
     .stat-content h3 {
         font-size: 1.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
     }
 }
 </style>

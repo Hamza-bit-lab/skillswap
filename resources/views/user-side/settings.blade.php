@@ -5,7 +5,7 @@
 @section('content')
 
 @if(session('success'))
-    <div class="container-fluid mt-3">
+    <div class="container mt-3">
         <div class="alert alert-success alert-dismissible fade show floating-alert" role="alert">
             <i class="fa fa-check-circle mr-2"></i>
             {{ session('success') }}
@@ -19,27 +19,19 @@
 <!-- Settings Container -->
 <div class="settings-container">
     <!-- Header Section -->
-    <div class="settings-header-section">
-        <div class="header-background">
-            <div class="header-overlay"></div>
-        </div>
-        
-        <div class="settings-header-content">
-            <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col-lg-8">
-                        <div class="header-content">
-                            <h1 class="header-title">Account Settings</h1>
-                            <p class="header-subtitle">Manage your account preferences and security settings</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="header-actions">
-                            <button class="btn btn-primary btn-lg" onclick="saveAllSettings()">
-                                <i class="fa fa-save"></i> Save All Changes
-                            </button>
-                        </div>
-                    </div>
+    <div class="settings-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-info">
+                    <h1 class="header-title">
+                        <i class="fa fa-cog"></i> Account Settings
+                    </h1>
+                    <p class="header-subtitle">Manage your account preferences and security settings</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="saveAllSettings()">
+                        <i class="fa fa-save"></i> Save All Changes
+                    </button>
                 </div>
             </div>
         </div>
@@ -48,102 +40,86 @@
     <!-- Settings Content -->
     <div class="settings-section">
         <div class="container-fluid">
-            <div class="row">
+            <div class="settings-layout">
                 <!-- Settings Navigation -->
-                <div class="col-lg-3">
-                    <div class="settings-nav">
-                        <div class="nav-item active" data-tab="profile">
-                            <i class="fa fa-user"></i>
-                            <span>Profile Settings</span>
-                        </div>
-                        <div class="nav-item" data-tab="security">
-                            <i class="fa fa-shield"></i>
-                            <span>Security</span>
-                        </div>
-                        <div class="nav-item" data-tab="notifications">
-                            <i class="fa fa-bell"></i>
-                            <span>Notifications</span>
-                        </div>
-                        <div class="nav-item" data-tab="privacy">
-                            <i class="fa fa-lock"></i>
-                            <span>Privacy</span>
-                        </div>
-                        <div class="nav-item" data-tab="preferences">
-                            <i class="fa fa-cog"></i>
-                            <span>Preferences</span>
-                        </div>
-                        <div class="nav-item" data-tab="billing">
-                            <i class="fa fa-credit-card"></i>
-                            <span>Billing</span>
-                        </div>
+                <div class="settings-nav">
+                    <div class="nav-item active" data-tab="profile">
+                        <i class="fa fa-user"></i>
+                        <span>Profile Settings</span>
+                    </div>
+                    <div class="nav-item" data-tab="security">
+                        <i class="fa fa-shield"></i>
+                        <span>Security</span>
+                    </div>
+                    <div class="nav-item" data-tab="notifications">
+                        <i class="fa fa-bell"></i>
+                        <span>Notifications</span>
+                    </div>
+                    <div class="nav-item" data-tab="privacy">
+                        <i class="fa fa-lock"></i>
+                        <span>Privacy</span>
+                    </div>
+                    <div class="nav-item" data-tab="preferences">
+                        <i class="fa fa-cog"></i>
+                        <span>Preferences</span>
+                    </div>
+                    <div class="nav-item" data-tab="billing">
+                        <i class="fa fa-credit-card"></i>
+                        <span>Billing</span>
                     </div>
                 </div>
 
                 <!-- Settings Content -->
-                <div class="col-lg-9">
+                <div class="settings-content">
                     <!-- Profile Settings Tab -->
                     <div class="settings-tab active" id="profile-tab">
                         <div class="settings-card">
                             <div class="card-header">
-                                <h3><i class="fa fa-user"></i> Profile Settings</h3>
+                                <h3 class="section-title">
+                                    <i class="fa fa-user"></i> Profile Settings
+                                </h3>
                                 <p>Update your personal information and profile details</p>
                             </div>
                             <div class="card-body">
                                 <form action="{{ route('user.profile.update') }}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="name" class="form-label">
-                                                    <i class="fa fa-user"></i> Full Name <span class="text-danger">*</span>
-                                                </label>
-                                                <input type="text" class="form-control" id="name" name="name" value="{{ auth()->user()->name }}" required>
-                                            </div>
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label for="name" class="form-label">
+                                                <i class="fa fa-user"></i> Full Name <span class="required">*</span>
+                                            </label>
+                                            <input type="text" class="form-control" id="name" name="name" value="{{ auth()->user()->name }}" required>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="username" class="form-label">
-                                                    <i class="fa fa-at"></i> Username <span class="text-danger">*</span>
-                                                </label>
-                                                <input type="text" class="form-control" id="username" name="username" value="{{ auth()->user()->username }}" required>
-                                            </div>
+                                        <div class="form-group">
+                                            <label for="username" class="form-label">
+                                                <i class="fa fa-at"></i> Username <span class="required">*</span>
+                                            </label>
+                                            <input type="text" class="form-control" id="username" name="username" value="{{ auth()->user()->username }}" required>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="email" class="form-label">
-                                                    <i class="fa fa-envelope"></i> Email Address <span class="text-danger">*</span>
-                                                </label>
-                                                <input type="email" class="form-control" id="email" name="email" value="{{ auth()->user()->email }}" required>
-                                            </div>
+                                        <div class="form-group">
+                                            <label for="email" class="form-label">
+                                                <i class="fa fa-envelope"></i> Email Address <span class="required">*</span>
+                                            </label>
+                                            <input type="email" class="form-control" id="email" name="email" value="{{ auth()->user()->email }}" required>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="phone" class="form-label">
-                                                    <i class="fa fa-phone"></i> Phone Number
-                                                </label>
-                                                <input type="tel" class="form-control" id="phone" name="phone" value="{{ auth()->user()->phone }}">
-                                            </div>
+                                        <div class="form-group">
+                                            <label for="phone" class="form-label">
+                                                <i class="fa fa-phone"></i> Phone Number
+                                            </label>
+                                            <input type="tel" class="form-control" id="phone" name="phone" value="{{ auth()->user()->phone }}">
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="location" class="form-label">
-                                                    <i class="fa fa-map-marker"></i> Location
-                                                </label>
-                                                <input type="text" class="form-control" id="location" name="location" value="{{ auth()->user()->location }}">
-                                            </div>
+                                        <div class="form-group">
+                                            <label for="location" class="form-label">
+                                                <i class="fa fa-map-marker"></i> Location
+                                            </label>
+                                            <input type="text" class="form-control" id="location" name="location" value="{{ auth()->user()->location }}">
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="bio" class="form-label">
-                                                    <i class="fa fa-info-circle"></i> Bio
-                                                </label>
-                                                <textarea class="form-control" id="bio" name="bio" rows="3">{{ auth()->user()->bio }}</textarea>
-                                            </div>
+                                        <div class="form-group">
+                                            <label for="bio" class="form-label">
+                                                <i class="fa fa-info-circle"></i> Bio
+                                            </label>
+                                            <textarea class="form-control" id="bio" name="bio" rows="3">{{ auth()->user()->bio }}</textarea>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -160,38 +136,32 @@
                     <div class="settings-tab" id="security-tab">
                         <div class="settings-card">
                             <div class="card-header">
-                                <h3><i class="fa fa-shield"></i> Security Settings</h3>
+                                <h3 class="section-title">
+                                    <i class="fa fa-shield"></i> Security Settings
+                                </h3>
                                 <p>Manage your password and account security</p>
                             </div>
                             <div class="card-body">
                                 <form action="{{ route('password.update') }}" method="POST">
                                     @csrf
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="current_password" class="form-label">
-                                                    <i class="fa fa-lock"></i> Current Password <span class="text-danger">*</span>
-                                                </label>
-                                                <input type="password" class="form-control" id="current_password" name="current_password" required>
-                                            </div>
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label for="current_password" class="form-label">
+                                                <i class="fa fa-lock"></i> Current Password <span class="required">*</span>
+                                            </label>
+                                            <input type="password" class="form-control" id="current_password" name="current_password" required>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="new_password" class="form-label">
-                                                    <i class="fa fa-key"></i> New Password <span class="text-danger">*</span>
-                                                </label>
-                                                <input type="password" class="form-control" id="new_password" name="password" required>
-                                            </div>
+                                        <div class="form-group">
+                                            <label for="new_password" class="form-label">
+                                                <i class="fa fa-key"></i> New Password <span class="required">*</span>
+                                            </label>
+                                            <input type="password" class="form-control" id="new_password" name="password" required>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="password_confirmation" class="form-label">
-                                                    <i class="fa fa-key"></i> Confirm New Password <span class="text-danger">*</span>
-                                                </label>
-                                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
-                                            </div>
+                                        <div class="form-group">
+                                            <label for="password_confirmation" class="form-label">
+                                                <i class="fa fa-key"></i> Confirm New Password <span class="required">*</span>
+                                            </label>
+                                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -236,7 +206,9 @@
                     <div class="settings-tab" id="notifications-tab">
                         <div class="settings-card">
                             <div class="card-header">
-                                <h3><i class="fa fa-bell"></i> Notification Settings</h3>
+                                <h3 class="section-title">
+                                    <i class="fa fa-bell"></i> Notification Settings
+                                </h3>
                                 <p>Choose how and when you want to be notified</p>
                             </div>
                             <div class="card-body">
@@ -311,7 +283,9 @@
                     <div class="settings-tab" id="privacy-tab">
                         <div class="settings-card">
                             <div class="card-header">
-                                <h3><i class="fa fa-lock"></i> Privacy Settings</h3>
+                                <h3 class="section-title">
+                                    <i class="fa fa-lock"></i> Privacy Settings
+                                </h3>
                                 <p>Control who can see your information</p>
                             </div>
                             <div class="card-body">
@@ -389,7 +363,9 @@
                     <div class="settings-tab" id="preferences-tab">
                         <div class="settings-card">
                             <div class="card-header">
-                                <h3><i class="fa fa-cog"></i> Preferences</h3>
+                                <h3 class="section-title">
+                                    <i class="fa fa-cog"></i> Preferences
+                                </h3>
                                 <p>Customize your SkillSwap experience</p>
                             </div>
                             <div class="card-body">
@@ -469,7 +445,9 @@
                     <div class="settings-tab" id="billing-tab">
                         <div class="settings-card">
                             <div class="card-header">
-                                <h3><i class="fa fa-credit-card"></i> Billing & Subscription</h3>
+                                <h3 class="section-title">
+                                    <i class="fa fa-credit-card"></i> Billing & Subscription
+                                </h3>
                                 <p>Manage your billing information and subscription</p>
                             </div>
                             <div class="card-body">
@@ -530,100 +508,102 @@
 </div>
 
 <style>
+/* Settings Container */
 .settings-container {
     min-height: 100vh;
-    background: #f8f9fa;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 }
 
-.settings-header-section {
-    position: relative;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 3rem 0;
-    margin-bottom: 2rem;
-}
-
-.header-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    z-index: 1;
-}
-
-.header-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.1);
-    z-index: 2;
-}
-
-.settings-header-content {
-    position: relative;
-    z-index: 3;
+/* Header Section */
+.settings-header {
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
+    padding: 80px 0;
+    color: #fff;
 }
 
 .header-content {
-    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-info {
+    flex: 1;
 }
 
 .header-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .header-subtitle {
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
-    opacity: 0.9;
+    font-size: 1rem;
+    color: rgba(255,255,255,0.9);
+    margin: 0;
 }
 
 .header-actions {
-    text-align: right;
+    flex-shrink: 0;
 }
 
+/* Settings Section */
 .settings-section {
-    padding: 0 1rem;
+    padding: 40px 0;
 }
 
+.settings-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 30px;
+}
+
+/* Settings Navigation */
 .settings-nav {
-    background: white;
-    border-radius: 15px;
-    padding: 1rem;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    margin-bottom: 2rem;
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
+    height: fit-content;
 }
 
 .nav-item {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    border-radius: 10px;
+    gap: 12px;
+    padding: 15px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    margin-bottom: 0.5rem;
+    transition: all 0.2s ease;
+    margin-bottom: 8px;
+    color: #6c757d;
+    font-weight: 500;
 }
 
 .nav-item:hover {
-    background: #f8f9fa;
-    color: #14a800;
+    background: rgba(75, 156, 211, 0.1);
+    color: #4B9CD3;
+    transform: translateX(5px);
 }
 
 .nav-item.active {
-    background: linear-gradient(135deg, #14a800 0%, #0d7a00 100%);
-    color: white;
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
+    color: #fff;
 }
 
 .nav-item i {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     width: 20px;
+}
+
+/* Settings Content */
+.settings-content {
+    flex: 1;
 }
 
 .settings-tab {
@@ -635,96 +615,145 @@
 }
 
 .settings-card {
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    margin-bottom: 2rem;
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.settings-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(75, 156, 211, 0.15);
 }
 
 .card-header {
-    background: linear-gradient(135deg, #14a800 0%, #0d7a00 100%);
-    color: white;
-    padding: 2rem;
-    border-radius: 15px 15px 0 0;
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
+    color: #fff;
+    padding: 25px;
+    border: none;
 }
 
-.card-header h3 {
-    margin: 0 0 0.5rem 0;
+.section-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0 0 8px 0;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 10px;
 }
 
 .card-header p {
     margin: 0;
     opacity: 0.9;
+    font-size: 0.95rem;
 }
 
 .card-body {
-    padding: 2rem;
+    padding: 30px;
+}
+
+/* Form Styles */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
 }
 
 .form-label {
     font-weight: 600;
     color: #495057;
-    margin-bottom: 0.5rem;
+    margin-bottom: 8px;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 8px;
+    font-size: 0.95rem;
 }
 
 .form-label i {
-    color: #14a800;
+    color: #4B9CD3;
+    width: 16px;
+}
+
+.required {
+    color: #dc3545;
 }
 
 .form-control {
     border: 2px solid #e9ecef;
-    border-radius: 10px;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px 15px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    background: #fff;
+    width: 100%;
 }
 
 .form-control:focus {
-    border-color: #14a800;
-    box-shadow: 0 0 0 3px rgba(20, 168, 0, 0.1);
-    background: white;
+    border-color: #4B9CD3;
+    box-shadow: 0 0 0 3px rgba(75, 156, 211, 0.1);
+    outline: none;
 }
 
+/* Buttons */
 .btn {
     border-radius: 8px;
     font-weight: 500;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    padding: 10px 20px;
+    font-size: 0.95rem;
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #14a800 0%, #0d7a00 100%);
-    border: none;
+    background: #4B9CD3;
+    border-color: #4B9CD3;
+    color: #fff;
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(20, 168, 0, 0.3);
+    background: #3a7bb3;
+    border-color: #3a7bb3;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(75, 156, 211, 0.3);
 }
 
 .btn-outline-primary {
-    border: 2px solid #14a800;
-    color: #14a800;
+    border: 2px solid #4B9CD3;
+    color: #4B9CD3;
+    background: transparent;
 }
 
 .btn-outline-primary:hover {
-    background: #14a800;
-    border-color: #14a800;
-    color: white;
+    background: #4B9CD3;
+    border-color: #4B9CD3;
+    color: #fff;
+}
+
+.btn-outline-secondary {
+    border: 2px solid #6c757d;
+    color: #6c757d;
+    background: transparent;
+}
+
+.btn-outline-secondary:hover {
+    background: #6c757d;
+    border-color: #6c757d;
+    color: #fff;
 }
 
 /* Switch Toggle */
 .switch {
     position: relative;
     display: inline-block;
-    width: 60px;
-    height: 34px;
+    width: 50px;
+    height: 24px;
 }
 
 .switch input {
@@ -741,55 +770,52 @@
     right: 0;
     bottom: 0;
     background-color: #ccc;
-    transition: .4s;
+    transition: .3s;
+    border-radius: 24px;
 }
 
 .slider:before {
     position: absolute;
     content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
     background-color: white;
-    transition: .4s;
+    transition: .3s;
+    border-radius: 50%;
 }
 
 input:checked + .slider {
-    background-color: #14a800;
+    background-color: #4B9CD3;
 }
 
 input:focus + .slider {
-    box-shadow: 0 0 1px #14a800;
+    box-shadow: 0 0 1px #4B9CD3;
 }
 
 input:checked + .slider:before {
     transform: translateX(26px);
 }
 
-.slider.round {
-    border-radius: 34px;
-}
-
-.slider.round:before {
-    border-radius: 50%;
-}
-
-/* Notification Items */
+/* Section Items */
 .notification-section,
 .privacy-section,
 .preferences-section,
-.billing-section {
-    margin-bottom: 2rem;
+.billing-section,
+.security-options {
+    margin-bottom: 30px;
 }
 
 .notification-section h4,
 .privacy-section h4,
 .preferences-section h4,
-.billing-section h4 {
-    color: #333;
-    margin-bottom: 1rem;
+.billing-section h4,
+.security-options h4 {
+    color: #212529;
+    margin-bottom: 20px;
     font-weight: 600;
+    font-size: 1.1rem;
 }
 
 .notification-item,
@@ -799,7 +825,7 @@ input:checked + .slider:before {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 0;
+    padding: 15px 0;
     border-bottom: 1px solid #e9ecef;
 }
 
@@ -821,9 +847,10 @@ input:checked + .slider:before {
 .privacy-info h5,
 .preference-info h5,
 .security-info h5 {
-    margin: 0 0 0.25rem 0;
+    margin: 0 0 5px 0;
     font-weight: 600;
-    color: #333;
+    color: #212529;
+    font-size: 1rem;
 }
 
 .notification-info p,
@@ -833,6 +860,7 @@ input:checked + .slider:before {
     margin: 0;
     color: #6c757d;
     font-size: 0.9rem;
+    line-height: 1.4;
 }
 
 .notification-toggle,
@@ -841,38 +869,42 @@ input:checked + .slider:before {
 .security-action,
 .privacy-action,
 .preference-action {
-    margin-left: 1rem;
+    margin-left: 20px;
 }
 
 /* Plan Card */
 .plan-card {
-    background: #f8f9fa;
-    border-radius: 10px;
-    padding: 1.5rem;
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    border-radius: 8px;
+    padding: 25px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border: 1px solid #e9ecef;
 }
 
 .plan-info h5 {
-    margin: 0 0 0.5rem 0;
-    color: #333;
+    margin: 0 0 8px 0;
+    color: #212529;
     font-weight: 600;
+    font-size: 1.1rem;
 }
 
 .plan-info p {
-    margin: 0 0 1rem 0;
+    margin: 0 0 15px 0;
     color: #6c757d;
+    font-size: 0.95rem;
 }
 
 .plan-info ul {
     margin: 0;
-    padding-left: 1.5rem;
+    padding-left: 20px;
     color: #6c757d;
+    font-size: 0.9rem;
 }
 
 .plan-info li {
-    margin-bottom: 0.25rem;
+    margin-bottom: 5px;
 }
 
 /* Payment Methods */
@@ -880,43 +912,58 @@ input:checked + .slider:before {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
-    background: #f8f9fa;
-    border-radius: 10px;
+    padding: 20px;
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
 }
 
 .payment-info {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 12px;
     color: #6c757d;
 }
 
 .payment-info i {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
+    color: #4B9CD3;
 }
 
-@media (max-width: 768px) {
-    .header-title {
-        font-size: 2rem;
-    }
-    
-    .header-actions {
-        text-align: center;
-        margin-top: 1rem;
+/* Responsive Design */
+@media (max-width: 992px) {
+    .settings-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
     }
     
     .settings-nav {
-        margin-bottom: 1rem;
+        order: 2;
     }
     
-    .nav-item {
-        padding: 0.75rem;
+    .settings-content {
+        order: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
     }
     
-    .card-header,
+    .header-title {
+        font-size: 1.5rem;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
     .card-body {
-        padding: 1.5rem;
+        padding: 20px;
     }
     
     .notification-item,
@@ -925,7 +972,7 @@ input:checked + .slider:before {
     .security-item {
         flex-direction: column;
         align-items: flex-start;
-        gap: 1rem;
+        gap: 15px;
     }
     
     .notification-toggle,
@@ -940,14 +987,40 @@ input:checked + .slider:before {
     
     .plan-card {
         flex-direction: column;
-        gap: 1rem;
+        gap: 20px;
         text-align: center;
     }
     
     .payment-method {
         flex-direction: column;
-        gap: 1rem;
+        gap: 15px;
         text-align: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .settings-header {
+        padding: 30px 0;
+    }
+    
+    .settings-section {
+        padding: 20px 0;
+    }
+    
+    .header-title {
+        font-size: 1.3rem;
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+    
+    .settings-nav {
+        padding: 15px;
+    }
+    
+    .nav-item {
+        padding: 12px;
     }
 }
 </style>

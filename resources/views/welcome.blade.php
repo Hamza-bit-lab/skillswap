@@ -19,7 +19,7 @@
 <body>
     <!-- Public Header -->
     <header class="main-header">
-        <div class="container-fluid">
+        <div class="container">
             <nav class="navbar navbar-expand-lg main-nav px-0">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     <i class="fa fa-exchange"></i> SkillSwap
@@ -38,7 +38,6 @@
                     <a href="#how-it-works" class="nav-link">How It Works</a>
                     <a href="#success-stories" class="nav-link">Success Stories</a>
                     <a href="#community" class="nav-link">Community</a>
-
                 </div>
                 
                 <!-- Auth Buttons -->
@@ -326,8 +325,6 @@
         </div>
     </section>
 
-
-
     <!-- Call to Action -->
     <section class="cta-section">
         <div class="container text-center">
@@ -434,7 +431,7 @@
     .navbar-brand {
         font-size: 1.5rem;
         font-weight: 700;
-        color: #14a800 !important;
+        color: #4B9CD3 !important;
         text-decoration: none;
     }
 
@@ -478,7 +475,7 @@
     }
 
     .nav-link:hover {
-        color: #14a800 !important;
+        color: #4B9CD3 !important;
     }
 
     .user-menu .btn {
@@ -490,7 +487,7 @@
 
     /* Hero Section */
     .hero-section {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
         padding: 120px 0 80px;
         color: white;
         position: relative;
@@ -516,7 +513,7 @@
     }
 
     .hero-title .highlight {
-        background: linear-gradient(45deg, #14a800, #0d7a00);
+        background: white;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -543,7 +540,6 @@
         display: block;
         font-size: 2rem;
         font-weight: 700;
-        color: #14a800;
     }
 
     .stat-label {
@@ -566,25 +562,25 @@
     }
 
     .btn-primary {
-        background: linear-gradient(135deg, #14a800 0%, #0d7a00 100%);
+        background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
         border: none;
-        box-shadow: 0 4px 15px rgba(20, 168, 0, 0.3);
+        box-shadow: 0 4px 15px rgba(75, 156, 211, 0.3);
     }
 
     .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(20, 168, 0, 0.4);
+        box-shadow: 0 8px 25px rgba(75, 156, 211, 0.4);
     }
 
     .btn-outline-primary {
-        border: 2px solid #14a800;
-        color: #14a800;
+        border: 2px solid #4B9CD3;
+        color: black;
         background: transparent;
     }
 
     .btn-outline-primary:hover {
-        background: #14a800;
-        border-color: #14a800;
+        background: #4B9CD3;
+        border-color: #4B9CD3;
         color: white;
     }
 
@@ -620,14 +616,14 @@
         height: 60px;
         border-radius: 50%;
         margin-bottom: 1rem;
-        border: 3px solid #14a800;
+        border: 3px solid #4B9CD3;
     }
 
     .user-info h4 {
         font-size: 1.1rem;
         font-weight: 600;
         margin-bottom: 0.5rem;
-        color: #14a800;
+        color: #4B9CD3;
     }
 
     .user-info p {
@@ -644,7 +640,7 @@
     }
 
     .skill-tag {
-        background: #14a800;
+        background: #4B9CD3;
         color: white;
         padding: 0.25rem 0.75rem;
         border-radius: 15px;
@@ -654,7 +650,7 @@
 
     .exchange-arrow {
         font-size: 2rem;
-        color: #14a800;
+        color: #4B9CD3;
         animation: pulse 2s infinite;
     }
 
@@ -686,28 +682,29 @@
     /* How It Works Section */
     .how-it-works {
         padding: 80px 0;
-        background: #f8f9fa;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     }
 
     .step-card {
         text-align: center;
         padding: 2rem;
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
         height: 100%;
+        border: 1px solid #e9ecef;
     }
 
     .step-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(75, 156, 211, 0.15);
     }
 
     .step-icon {
         width: 80px;
         height: 80px;
-        background: linear-gradient(135deg, #14a800 0%, #0d7a00 100%);
+        background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -732,7 +729,7 @@
     /* Featured Skills Section */
     .featured-skills {
         padding: 80px 0;
-        background: white;
+        background: #fff;
     }
 
     .skills-grid {
@@ -743,25 +740,25 @@
     }
 
     .skill-category {
-        background: white;
-        border-radius: 20px;
+        background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+        border-radius: 15px;
         padding: 2rem;
         text-align: center;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
-        border: 2px solid transparent;
+        border: 1px solid #e9ecef;
     }
 
     .skill-category:hover {
         transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        border-color: #14a800;
+        box-shadow: 0 8px 25px rgba(75, 156, 211, 0.15);
+        border-color: #4B9CD3;
     }
 
     .skill-category .skill-icon {
         width: 70px;
         height: 70px;
-        background: linear-gradient(135deg, #14a800 0%, #0d7a00 100%);
+        background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -799,17 +796,18 @@
     }
 
     .story-card {
-        background: white;
-        border-radius: 20px;
+        background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+        border-radius: 15px;
         padding: 2rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         height: 100%;
         transition: all 0.3s ease;
+        border: 1px solid #e9ecef;
     }
 
     .story-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        box-shadow: 0 8px 25px rgba(75, 156, 211, 0.15);
     }
 
     .story-header {
@@ -829,11 +827,11 @@
         width: 50px;
         height: 50px;
         border-radius: 50%;
-        border: 3px solid #14a800;
+        border: 3px solid #4B9CD3;
     }
 
     .exchange-icon {
-        color: #14a800;
+        color: #4B9CD3;
         font-size: 1.2rem;
     }
 
@@ -862,7 +860,7 @@
     }
 
     .story-tag {
-        background: #14a800;
+        background: #4B9CD3;
         color: white;
         padding: 0.25rem 0.75rem;
         border-radius: 15px;
@@ -873,7 +871,7 @@
     /* Community Stats Section */
     .community-stats {
         padding: 80px 0;
-        background: linear-gradient(135deg, #14a800 0%, #0d7a00 100%);
+        background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
         color: white;
     }
 
@@ -899,12 +897,10 @@
         opacity: 0.9;
     }
 
-
-
     /* CTA Section */
     .cta-section {
         padding: 80px 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
         color: white;
         text-align: center;
     }
@@ -946,7 +942,7 @@
         font-size: 1.3rem;
         font-weight: 600;
         margin-bottom: 1rem;
-        color: #14a800;
+        color: #4B9CD3;
     }
 
     .page-footer h6 {
@@ -970,7 +966,7 @@
     .social-links a {
         width: 40px;
         height: 40px;
-        background: #14a800;
+        background: #4B9CD3;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -981,7 +977,7 @@
     }
 
     .social-links a:hover {
-        background: #0d7a00;
+        background: #3a7bb3;
         transform: translateY(-2px);
     }
 
@@ -1001,7 +997,7 @@
     }
 
     .footer-links a:hover {
-        color: #14a800;
+        color: #4B9CD3;
     }
 
     .footer-bottom {
@@ -1038,8 +1034,6 @@
         .skills-grid {
             grid-template-columns: 1fr;
         }
-
-
 
         .cta-buttons {
             flex-direction: column;
