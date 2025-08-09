@@ -6,7 +6,7 @@
 <div class="skill-details-container">
     <!-- Header Section -->
     <div class="skill-details-header">
-        <div class="container-fluid">
+        <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <nav aria-label="breadcrumb">
@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
             <!-- Skill Details -->
             <div class="col-lg-8">
@@ -293,7 +293,7 @@
 }
 
 .breadcrumb-item a {
-    color: #14a800;
+    color: #4B9CD3;
     text-decoration: none;
 }
 
@@ -349,7 +349,7 @@
 .level-expert { background: #f8d7da; color: #721c24; }
 
 .badge-category {
-    background: #14a800;
+    background: #4B9CD3;
     color: white;
 }
 
@@ -428,7 +428,7 @@
 
 .detail-item i {
     font-size: 1.5rem;
-    color: #14a800;
+    color: #4B9CD3;
     width: 30px;
     text-align: center;
 }
@@ -450,7 +450,7 @@
 }
 
 .detail-content a:hover {
-    color: #14a800;
+    color: #4B9CD3;
 }
 
 .reviews-section {
@@ -539,7 +539,7 @@
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    border: 4px solid #14a800;
+    border: 4px solid #4B9CD3;
     margin-bottom: 15px;
 }
 

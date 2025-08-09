@@ -23,12 +23,12 @@
         <div class="col-md-6 col-lg-4">
             <div class="text-center mb-4">
                 <h1 class="mb-0">
-                    <i class="fa fa-exchange" style="color: #14a800;"></i> SkillSwap
+                    <i class="fa fa-exchange" style="color: #4B9CD3;"></i> SkillSwap
                 </h1>
-                <p class="text-muted">Set new password</p>
+                <p class="text-muted">Set a new password for your account</p>
             </div>
             
-            <div class="card shadow">
+            <div class="card shadow" style="border:1px solid #e9ecef; border-radius: 16px;">
                 <div class="card-body p-4">
                     <form method="POST" action="{{ route('password.update') }}">
                         @csrf
@@ -37,7 +37,7 @@
 
                         <div class="form-group">
                             <label for="email">{{ __('Email Address') }}</label>
-                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ $email ?? old('email') }}" required autocomplete="email" autofocus>
+                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ $email ?? old('email') }}" required autocomplete="email" autofocus placeholder="you@example.com">
 
                             @error('email')
                                 <span class="invalid-feedback" role="alert">
@@ -48,7 +48,7 @@
 
                         <div class="form-group">
                             <label for="password">{{ __('New Password') }}</label>
-                            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+                            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password" placeholder="********">
 
                             @error('password')
                                 <span class="invalid-feedback" role="alert">
@@ -59,11 +59,11 @@
 
                         <div class="form-group">
                             <label for="password-confirm">{{ __('Confirm New Password') }}</label>
-                            <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
+                            <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password" placeholder="********">
                         </div>
 
                         <div class="form-group mb-0">
-                            <button type="submit" class="btn btn-primary btn-block">
+                            <button type="submit" class="btn btn-primary btn-block" style="background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%); border: none; border-radius: 10px;">
                                 {{ __('Reset Password') }}
                             </button>
                         </div>
@@ -73,7 +73,7 @@
 
             <div class="text-center mt-4">
                 <p class="text-muted">
-                    <a href="{{ route('login') }}" class="text-primary">Back to Login</a>
+                    <a href="{{ route('login') }}" class="text-primary" style="color:#4B9CD3 !important;">Back to Login</a>
                 </p>
             </div>
         </div>

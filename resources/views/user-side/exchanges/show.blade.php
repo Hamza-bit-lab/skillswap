@@ -10,7 +10,7 @@
             <div class="header-overlay"></div>
         </div>
         <div class="exchanges-header-content">
-            <div class="container-fluid">
+            <div class="container">
                 <div class="row align-items-center">
                     <div class="col-lg-8">
                             <div class="header-content">
@@ -519,14 +519,14 @@
 /* Exchange Container */
 .exchange-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     padding: 0;
 }
 
 /* Header Section */
 .exchange-header-section {
     position: relative;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     padding: 60px 0 40px;
     margin-bottom: 30px;
 }
@@ -638,7 +638,7 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -665,6 +665,7 @@
     background: #f8f9fa;
     min-height: 60vh;
     padding: 30px 0;
+    margin: 0 15px;
 }
 
 /* Profile Cards */
@@ -673,10 +674,12 @@
     border-radius: 15px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     overflow: hidden;
+    margin-bottom: 25px;
+    border: 1px solid #e9ecef;
 }
 
 .profile-card .card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     color: #fff;
     padding: 20px;
     border: none;
@@ -717,7 +720,7 @@
 }
 
 .detail-item i {
-    color: #667eea;
+    color: #4B9CD3;
     font-size: 18px;
     width: 20px;
     margin-top: 2px;
@@ -882,13 +885,15 @@
     border-radius: 15px;
     padding: 30px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
+    min-height: 400px;
 }
 
 /* Overview Grid */
 .overview-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
 }
 
 .overview-card {
@@ -896,9 +901,11 @@
     align-items: center;
     gap: 15px;
     padding: 20px;
-    background: #f8f9fa;
+    background: #fff;
     border-radius: 12px;
     transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
 .overview-card:hover {
@@ -947,10 +954,12 @@
 
 .skill-card {
     flex: 1;
-    background: #f8f9fa;
+    background: #fff;
     border-radius: 15px;
     padding: 25px;
     transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
 .skill-card:hover {
@@ -1066,10 +1075,12 @@
 }
 
 .timeline-content {
-    background: #f8f9fa;
+    background: #fff;
     padding: 20px;
     border-radius: 12px;
     margin-left: 20px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
 .timeline-content h6 {

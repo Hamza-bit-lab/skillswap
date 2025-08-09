@@ -25,7 +25,7 @@
 
     <!-- Stats Section -->
     <div class="stats-section">
-        <div class="container-fluid">
+        <div class="container">
             <div class="stats-grid">
                 <div class="stat-item">
                     <div class="stat-icon">
@@ -69,7 +69,7 @@
 
     <!-- Filter Section -->
     <div class="filter-section">
-        <div class="container-fluid">
+        <div class="container">
             <div class="filter-card">
                 <div class="filter-tabs">
                     <a href="{{ route('user.exchanges.my-exchanges') }}" 
@@ -101,7 +101,7 @@
 
     <!-- Exchanges List -->
     <div class="exchanges-list-section">
-        <div class="container-fluid">
+        <div class="container">
             @if($exchanges->count() > 0)
                 <div class="exchanges-grid">
                     @foreach($exchanges as $exchange)

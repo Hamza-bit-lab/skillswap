@@ -23,29 +23,29 @@
         <div class="col-md-6 col-lg-4">
             <div class="text-center mb-4">
                 <h1 class="mb-0">
-                    <i class="fa fa-exchange" style="color: #14a800;"></i> SkillSwap
+                    <i class="fa fa-exchange" style="color: #4B9CD3;"></i> SkillSwap
                 </h1>
-                <p class="text-muted">Verify your email address</p>
+                <p class="text-muted">Enter the verification code sent to your email</p>
             </div>
             
-            <div class="card shadow">
+            <div class="card shadow" style="border:1px solid #e9ecef; border-radius: 16px;">
                 <div class="card-body p-4">
                     @if(session('success'))
-                        <div class="alert alert-success" role="alert">
+                        <div class="alert alert-success" role="alert" style="border-radius: 10px;">
                             <i class="fa fa-check-circle mr-2"></i>
                             {{ session('success') }}
                         </div>
                     @endif
 
                     @if($errors->any())
-                        <div class="alert alert-danger" role="alert">
+                        <div class="alert alert-danger" role="alert" style="border-radius: 10px;">
                             <i class="fa fa-exclamation-circle mr-2"></i>
                             {{ $errors->first() }}
                         </div>
                     @endif
 
                     <div class="text-center mb-4">
-                        <i class="fa fa-envelope" style="font-size: 3rem; color: #14a800;"></i>
+                        <i class="fa fa-envelope" style="font-size: 3rem; color: #4B9CD3;"></i>
                         <h4 class="mt-3">Check Your Email</h4>
                         <p class="text-muted">
                             We've sent a 4-digit verification code to<br>
@@ -68,7 +68,7 @@
                         </div>
 
                         <div class="form-group mb-0">
-                            <button type="submit" class="btn btn-primary btn-block" id="verifyBtn" disabled>
+                            <button type="submit" class="btn btn-primary btn-block" id="verifyBtn" disabled style="background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%); border: none; border-radius: 10px;">
                                 <i class="fa fa-check mr-2"></i>Verify Email
                             </button>
                         </div>
@@ -78,7 +78,7 @@
                         <p class="text-muted mb-2">Didn't receive the code?</p>
                         <form method="POST" action="{{ route('otp.send') }}" style="display: inline;">
                             @csrf
-                            <button type="submit" class="btn btn-link text-primary">
+                            <button type="submit" class="btn btn-link text-primary" style="color:#4B9CD3 !important;">
                                 <i class="fa fa-refresh mr-1"></i>Resend OTP
                             </button>
                         </form>
@@ -88,7 +88,7 @@
 
             <div class="text-center mt-4">
                 <p class="text-muted">
-                    <a href="{{ route('user.dashboard') }}" class="text-primary">Skip for now</a>
+                    <a href="{{ route('user.dashboard') }}" class="text-primary" style="color:#4B9CD3 !important;">Skip for now</a>
                 </p>
             </div>
         </div>
@@ -186,14 +186,14 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .otp-input:focus {
-    border-color: #14a800;
-    box-shadow: 0 0 0 3px rgba(20, 168, 0, 0.1);
+    border-color: #4B9CD3;
+    box-shadow: 0 0 0 3px rgba(75, 156, 211, 0.1);
     outline: none;
 }
 
 .otp-input.filled {
-    border-color: #14a800;
-    background-color: #f8fff9;
+    border-color: #4B9CD3;
+    background-color: #f0f8ff;
 }
 
 @media (max-width: 576px) {

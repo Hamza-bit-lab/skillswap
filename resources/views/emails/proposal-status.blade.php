@@ -7,15 +7,15 @@
     <style>
         body { font-family: 'Inter', Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f8f9fa; }
         .container { max-width: 600px; margin: 0 auto; background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .header { background: linear-gradient(135deg, #14a800, #0d8a00); color: white; padding: 30px; text-align: center; }
+        .header { background: linear-gradient(135deg, #4B9CD3, #3a7bb3); color: white; padding: 30px; text-align: center; }
         .header h1 { margin: 0; font-size: 2rem; font-weight: 700; }
         .header p { margin: 10px 0 0 0; opacity: 0.9; }
         .content { padding: 40px 30px; }
         .status-box { background: #f8f9fa; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 30px 0; text-align: center; }
-        .status-accepted { color: #14a800; font-weight: bold; }
+        .status-accepted { color: #3a7bb3; font-weight: bold; }
         .status-rejected { color: #dc3545; font-weight: bold; }
-        .btn { display: inline-block; background: #14a800; color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: 600; margin: 20px 0; }
-        .btn:hover { background: #0d8a00; }
+        .btn { display: inline-block; background: #4B9CD3; color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: 600; margin: 20px 0; }
+        .btn:hover { background: #3a7bb3; }
         .footer { background: #f8f9fa; padding: 20px 30px; text-align: center; color: #6c757d; font-size: 0.9rem; }
     </style>
 </head>

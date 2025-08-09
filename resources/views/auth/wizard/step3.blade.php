@@ -27,12 +27,12 @@
         </div>
         
         <div class="registration-header-content">
-            <div class="container-fluid">
+            <div class="container">
                 <div class="row align-items-center">
                     <div class="col-lg-6">
                         <div class="header-content">
                             <h1 class="header-title">
-                                <i class="fa fa-exchange" style="color: #14a800;"></i> SkillSwap
+                                <i class="fa fa-exchange" style="color: #ffffff;"></i> SkillSwap
                             </h1>
                             <p class="header-subtitle">Join our community of skilled professionals and start exchanging your expertise</p>
                             <div class="header-features">
@@ -227,7 +227,7 @@
 <style>
 .registration-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     overflow-x: hidden;
 }
 
@@ -244,7 +244,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     z-index: 1;
 }
 
@@ -332,7 +332,7 @@
 }
 
 .registration-card-header {
-    background: linear-gradient(135deg, #14a800 0%, #0d7a00 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     color: white;
     padding: 2rem;
     text-align: center;
@@ -363,7 +363,7 @@
 }
 
 .form-label i {
-    color: #14a800;
+    color: #4B9CD3;
 }
 
 .form-control {
@@ -376,8 +376,8 @@
 }
 
 .form-control:focus {
-    border-color: #14a800;
-    box-shadow: 0 0 0 3px rgba(20, 168, 0, 0.1);
+    border-color: #4B9CD3;
+    box-shadow: 0 0 0 3px rgba(75, 156, 211, 0.15);
     background: white;
 }
 
@@ -387,7 +387,7 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #14a800 0%, #0d7a00 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     border: none;
     border-radius: 10px;
     padding: 0.875rem 1.5rem;
@@ -398,7 +398,7 @@
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(20, 168, 0, 0.3);
+    box-shadow: 0 10px 20px rgba(75, 156, 211, 0.35);
 }
 
 .btn-outline-secondary {

@@ -22,7 +22,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         .header {
-            background: linear-gradient(135deg, #14a800, #0d8a00);
+            background: linear-gradient(135deg, #4B9CD3, #3a7bb3);
             color: white;
             padding: 30px;
             text-align: center;
@@ -54,20 +54,20 @@
         .otp-digits {
             font-size: 2.5rem;
             font-weight: 700;
-            color: #14a800;
+            color: #3a7bb3;
             letter-spacing: 10px;
             font-family: 'Courier New', monospace;
         }
         .info-box {
-            background: #e8f5e8;
-            border-left: 4px solid #14a800;
+            background: #e9f3fb;
+            border-left: 4px solid #4B9CD3;
             padding: 20px;
             margin: 20px 0;
             border-radius: 5px;
         }
         .info-box h3 {
             margin: 0 0 10px 0;
-            color: #14a800;
+            color: #3a7bb3;
             font-size: 1.1rem;
         }
         .info-box p {
@@ -83,7 +83,7 @@
         }
         .btn {
             display: inline-block;
-            background: #14a800;
+            background: #4B9CD3;
             color: white;
             padding: 12px 30px;
             text-decoration: none;
@@ -91,9 +91,7 @@
             font-weight: 600;
             margin: 20px 0;
         }
-        .btn:hover {
-            background: #0d8a00;
-        }
+        .btn:hover { background: #3a7bb3; }
         .warning {
             background: #fff3cd;
             border: 1px solid #ffeaa7;

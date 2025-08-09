@@ -1,44 +1,51 @@
-@extends('layouts.app')
+<!doctype html>
+<html lang="en">
 
-@section('content')
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+    <title>SkillSwap - Confirm Password</title>
+</head>
+
+<body style="background: #f8f9fa;">
+
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Confirm Password') }}</div>
+    <div class="row justify-content-center align-items-center" style="min-height: 100vh;">
+        <div class="col-md-6 col-lg-5">
+            <div class="text-center mb-4">
+                <h1 class="mb-0">
+                    <i class="fa fa-exchange" style="color: #4B9CD3;"></i> SkillSwap
+                </h1>
+                <p class="text-muted">Please confirm your password before continuing</p>
+            </div>
 
-                <div class="card-body">
-                    {{ __('Please confirm your password before continuing.') }}
-
+            <div class="card shadow" style="border:1px solid #e9ecef; border-radius: 16px;">
+                <div class="card-body p-4">
                     <form method="POST" action="{{ route('password.confirm') }}">
                         @csrf
 
-                        <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
-
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
+                        <div class="form-group">
+                            <label for="password">{{ __('Password') }}</label>
+                            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password" placeholder="********">
+                            @error('password')
+                                <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+                            @enderror
                         </div>
 
-                        <div class="row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Confirm Password') }}
-                                </button>
-
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        {{ __('Forgot Your Password?') }}
-                                    </a>
-                                @endif
-                            </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a class="text-muted" href="{{ route('password.request') }}">{{ __('Forgot Your Password?') }}</a>
+                            <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%); border: none; border-radius: 10px;">
+                                {{ __('Confirm Password') }}
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -46,4 +53,11 @@
         </div>
     </div>
 </div>
-@endsection
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

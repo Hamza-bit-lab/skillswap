@@ -13,6 +13,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+    <!-- intl-tel-input CSS for phone masking & flags -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.6.1/build/css/intlTelInput.css" />
     <title>SkillSwap - Join Us (Step 1)</title>
 </head>
 
@@ -27,12 +29,12 @@
         </div>
         
         <div class="registration-header-content">
-            <div class="container-fluid">
+            <div class="container">
                 <div class="row align-items-center">
                     <div class="col-lg-6">
                         <div class="header-content">
                             <h1 class="header-title">
-                                <i class="fa fa-exchange" style="color: #14a800;"></i> SkillSwap
+                                <i class="fa fa-exchange" style="color: #ffffff;"></i> SkillSwap
                             </h1>
                             <p class="header-subtitle">Join our community of skilled professionals and start exchanging your expertise</p>
                             <div class="header-features">
@@ -91,128 +93,124 @@
                                     </div>
 
                                     <form method="POST" action="{{ route('register.step1.store') }}" enctype="multipart/form-data">
-                                        @csrf
+    @csrf
 
-                                        <!-- Avatar Upload Section -->
-                                        <div class="form-group text-center mb-4">
-                                            <label class="form-label">{{ __('Profile Picture') }}</label>
-                                            <div class="avatar-upload-container">
-                                                <div class="avatar-preview" id="avatarPreview">
-                                                    <img src="{{ asset('assets/images/default-avatar.jpg') }}" alt="Avatar Preview" id="avatarImage" class="avatar-img">
-                                                    <div class="avatar-overlay">
-                                                        <i class="fa fa-camera"></i>
-                                                        <span>Upload Photo</span>
-                                                    </div>
-                                                </div>
-                                                <input type="file" id="avatar" name="avatar" class="avatar-input @error('avatar') is-invalid @enderror" accept="image/jpeg,image/png,image/jpg">
-                                                <small class="form-text text-muted">Optional. JPEG or PNG, max 3MB, min 100x100px</small>
-                                                @error('avatar')
-                                                    <div class="invalid-feedback d-block">
-                                                        <strong>{{ $message }}</strong>
-                                                    </div>
-                                                @enderror
-                                            </div>
-                                        </div>
+    <!-- Avatar Upload Section -->
+    <div class="form-group text-center mb-4">
+        <label class="form-label">{{ __('Profile Picture') }}</label>
+        <div class="avatar-upload-container d-inline-block position-relative">
+            <div class="avatar-preview" id="avatarPreview" style="position: relative; display: inline-block;">
+                <img src="{{ asset('assets/images/default-avatar.jpg') }}" alt="Avatar Preview" id="avatarImage" class="avatar-img rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                <div class="avatar-overlay d-flex flex-column justify-content-center align-items-center"
+                     style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); color:#fff; opacity:0; transition:opacity 0.3s; border-radius:50%;">
+                    <i class="fa fa-camera mb-1"></i>
+                    <span style="font-size: 12px;">Upload Photo</span>
+                </div>
+            </div>
+            <input type="file" id="avatar" name="avatar" class="avatar-input @error('avatar') is-invalid @enderror mt-2" accept="image/jpeg,image/png,image/jpg">
+            <small class="form-text text-muted">Optional. JPEG or PNG, max 3MB, min 100x100px</small>
+            @error('avatar')
+                <div class="invalid-feedback d-block">
+                    <strong>{{ $message }}</strong>
+                </div>
+            @enderror
+        </div>
+    </div>
 
-                                        <div class="form-group">
-                                            <label for="name" class="form-label">
-                                                <i class="fa fa-user"></i> Full Name <span class="text-danger">*</span>
-                                            </label>
-                                            <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus placeholder="Enter your full name">
-                                            @error('name')
-                                                <div class="invalid-feedback">
-                                                    <strong>{{ $message }}</strong>
-                                                </div>
-                                            @enderror
-                                        </div>
+    <!-- Full Name & Username -->
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="name" class="form-label"><i class="fa fa-user"></i> Full Name <span class="text-danger">*</span></label>
+            <input id="name" type="text" class="form-control @error('name') is-invalid @enderror"
+                   name="name" value="{{ old('name') }}" required autocomplete="name" placeholder="Enter your full name">
+            @error('name')
+                <div class="invalid-feedback"><strong>{{ $message }}</strong></div>
+            @enderror
+        </div>
+        <div class="form-group col-md-6">
+            <label for="username" class="form-label"><i class="fa fa-at"></i> Username <span class="text-danger">*</span></label>
+            <input id="username" type="text" class="form-control @error('username') is-invalid @enderror"
+                   name="username" value="{{ old('username') }}" required placeholder="Choose a unique username">
+            <small class="form-text text-muted">Letters, numbers, and underscores only</small>
+            @error('username')
+                <div class="invalid-feedback"><strong>{{ $message }}</strong></div>
+            @enderror
+        </div>
+    </div>
 
-                                        <div class="form-group">
-                                            <label for="username" class="form-label">
-                                                <i class="fa fa-at"></i> Username <span class="text-danger">*</span>
-                                            </label>
-                                            <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required placeholder="Choose a unique username">
-                                            <small class="form-text text-muted">This will be your unique identifier on SkillSwap (letters, numbers, and underscores only)</small>
-                                            @error('username')
-                                                <div class="invalid-feedback">
-                                                    <strong>{{ $message }}</strong>
-                                                </div>
-                                            @enderror
-                                        </div>
+    <!-- Email & Phone -->
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="email" class="form-label"><i class="fa fa-envelope"></i> Email Address <span class="text-danger">*</span></label>
+            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
+                   name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="Enter your email">
+            @error('email')
+                <div class="invalid-feedback"><strong>{{ $message }}</strong></div>
+            @enderror
+        </div>
+        <div class="form-group col-md-6">
+            <label for="location" class="form-label"><i class="fa fa-map-marker"></i> Location</label>
+            <input id="location" type="text" class="form-control @error('location') is-invalid @enderror"
+                   name="location" value="{{ old('location') }}" placeholder="City, Country">
+            @error('location')
+                <div class="invalid-feedback"><strong>{{ $message }}</strong></div>
+            @enderror
+        </div>
+    </div>
 
-                                        <div class="form-group">
-                                            <label for="email" class="form-label">
-                                                <i class="fa fa-envelope"></i> Email Address <span class="text-danger">*</span>
-                                            </label>
-                                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="Enter your email address">
-                                            @error('email')
-                                                <div class="invalid-feedback">
-                                                    <strong>{{ $message }}</strong>
-                                                </div>
-                                            @enderror
-                                        </div>
+    <!-- Password & Confirm Password -->
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="password" class="form-label"><i class="fa fa-lock"></i> Password <span class="text-danger">*</span></label>
+            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
+                   name="password" required autocomplete="new-password" placeholder="Create a strong password">
+            <small class="form-text text-muted">Minimum 8 characters</small>
+            @error('password')
+                <div class="invalid-feedback"><strong>{{ $message }}</strong></div>
+            @enderror
+        </div>
+        <div class="form-group col-md-6">
+            <label for="password_confirmation" class="form-label"><i class="fa fa-lock"></i> Confirm Password <span class="text-danger">*</span></label>
+            <input id="password_confirmation" type="password" class="form-control"
+                   name="password_confirmation" required autocomplete="new-password" placeholder="Confirm your password">
+        </div>
+    </div>
 
-                                        <div class="form-group">
-                                            <label for="password" class="form-label">
-                                                <i class="fa fa-lock"></i> Password <span class="text-danger">*</span>
-                                            </label>
-                                            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password" placeholder="Create a strong password">
-                                            <small class="form-text text-muted">Minimum 8 characters</small>
-                                            @error('password')
-                                                <div class="invalid-feedback">
-                                                    <strong>{{ $message }}</strong>
-                                                </div>
-                                            @enderror
-                                        </div>
+    <!-- Location & Bio -->
+    
+        
+        <div class="form-group"">
+            <label for="phone" class="form-label"><i class="fa fa-phone"></i> Phone Number</label>
+            <input id="phone" type="tel" class="form-control iti__tel-input @error('phone') is-invalid @enderror"
+                   name="phone" value="{{ old('phone') }}" placeholder="Enter your phone number">
+            <input type="hidden" name="phone_country" id="phone_country" value="{{ old('phone_country') }}">
+            <input type="hidden"  name="phone_country_dial" id="phone_country_dial" value="{{ old('phone_country_dial') }}">
+            <small class="form-text text-muted">Include your country code</small>
+            @error('phone')
+                <div class="invalid-feedback"><strong>{{ $message }}</strong></div>
+            @enderror
+        </div>
+        <div class="form-group ">
+            <label for="bio" class="form-label"><i class="fa fa-info-circle"></i> Bio</label>
+            <textarea id="bio" class="form-control @error('bio') is-invalid @enderror"
+                      name="bio" rows="3" placeholder="Tell us about yourself">{{ old('bio') }}</textarea>
+            @error('bio')
+                <div class="invalid-feedback"><strong>{{ $message }}</strong></div>
+            @enderror
+        </div>
+   
 
-                                        <div class="form-group">
-                                            <label for="password_confirmation" class="form-label">
-                                                <i class="fa fa-lock"></i> Confirm Password <span class="text-danger">*</span>
-                                            </label>
-                                            <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password" placeholder="Confirm your password">
-                                        </div>
+    <!-- Submit -->
+    <div class="form-group mb-0">
+        <button type="submit" class="btn btn-primary btn-block btn-lg">
+            Next Step <i class="fa fa-arrow-right ml-2"></i>
+        </button>
+    </div>
+</form>
 
-                                        <div class="form-group">
-                                            <label for="phone" class="form-label">
-                                                <i class="fa fa-phone"></i> Phone Number
-                                            </label>
-                                            <input id="phone" type="tel" class="form-control @error('phone') is-invalid @enderror" name="phone" value="{{ old('phone') }}" placeholder="Enter your phone number">
-                                            @error('phone')
-                                                <div class="invalid-feedback">
-                                                    <strong>{{ $message }}</strong>
-                                                </div>
-                                            @enderror
-                                        </div>
+<!-- Hover Effect for Avatar -->
 
-                                        <div class="form-group">
-                                            <label for="location" class="form-label">
-                                                <i class="fa fa-map-marker"></i> Location
-                                            </label>
-                                            <input id="location" type="text" class="form-control @error('location') is-invalid @enderror" name="location" value="{{ old('location') }}" placeholder="City, Country">
-                                            @error('location')
-                                                <div class="invalid-feedback">
-                                                    <strong>{{ $message }}</strong>
-                                                </div>
-                                            @enderror
-                                        </div>
 
-                                        <div class="form-group">
-                                            <label for="bio" class="form-label">
-                                                <i class="fa fa-info-circle"></i> Bio
-                                            </label>
-                                            <textarea id="bio" class="form-control @error('bio') is-invalid @enderror" name="bio" rows="3" placeholder="Tell us a bit about yourself, your interests, and what you're looking for in skill exchanges...">{{ old('bio') }}</textarea>
-                                            @error('bio')
-                                                <div class="invalid-feedback">
-                                                    <strong>{{ $message }}</strong>
-                                                </div>
-                                            @enderror
-                                        </div>
-
-                                        <div class="form-group mb-0">
-                                            <button type="submit" class="btn btn-primary btn-block btn-lg">
-                                                Next Step <i class="fa fa-arrow-right ml-2"></i>
-                                            </button>
-                                        </div>
-                                    </form>
                                 </div>
                             </div>
 
@@ -235,6 +233,9 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<!-- intl-tel-input JS -->
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.6.1/build/js/intlTelInput.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.6.1/build/js/utils.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -298,13 +299,82 @@ document.addEventListener('DOMContentLoaded', function() {
             avatarInput.dispatchEvent(new Event('change'));
         }
     });
+
+    // Phone input with country flags & masking
+    const phoneInput = document.getElementById('phone');
+    const phoneError = document.getElementById('phoneError');
+    const phoneCountry = document.getElementById('phone_country');
+    const phoneCountryDial = document.getElementById('phone_country_dial');
+
+    if (phoneInput) {
+        const iti = window.intlTelInput(phoneInput, {
+            initialCountry: 'auto',
+            separateDialCode: true,
+            nationalMode: false,
+            autoPlaceholder: 'aggressive',
+            preferredCountries: ['us','gb','ca','au','in','pk'],
+            utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@23.6.1/build/js/utils.js',
+            geoIpLookup: function(callback) {
+                fetch('https://ipapi.co/json')
+                  .then(function(res){ return res.ok ? res.json() : null; })
+                  .then(function(data){ callback(data && data.country ? data.country : 'US'); })
+                  .catch(function(){ callback('US'); });
+            }
+        });
+
+        function setPhoneMeta() {
+            const data = iti.getSelectedCountryData();
+            phoneCountry.value = (data && data.iso2) ? data.iso2.toUpperCase() : '';
+            phoneCountryDial.value = (data && data.dialCode) ? '+' + data.dialCode : '';
+        }
+
+        setPhoneMeta();
+        phoneInput.addEventListener('countrychange', setPhoneMeta);
+
+        phoneInput.addEventListener('blur', function() {
+            if (phoneInput.value.trim().length === 0) {
+                phoneError.classList.add('d-none');
+                phoneInput.classList.remove('is-invalid');
+                return;
+            }
+            if (iti.isValidNumber()) {
+                phoneError.classList.add('d-none');
+                phoneInput.classList.remove('is-invalid');
+            } else {
+                phoneError.classList.remove('d-none');
+                phoneInput.classList.add('is-invalid');
+            }
+        });
+
+        // Ensure E.164 value is submitted
+        const form = phoneInput.closest('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const raw = phoneInput.value.trim();
+                if (raw.length === 0) {
+                    // optional field: allow empty
+                    return;
+                }
+                if (!iti.isValidNumber()) {
+                    e.preventDefault();
+                    phoneError.classList.remove('d-none');
+                    phoneInput.classList.add('is-invalid');
+                    phoneInput.focus();
+                    return;
+                }
+                // Replace input with full E.164
+                phoneInput.value = iti.getNumber();
+                setPhoneMeta();
+            });
+        }
+    }
 });
 </script>
 
 <style>
 .registration-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     overflow-x: hidden;
 }
 
@@ -321,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function() {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     z-index: 1;
 }
 
@@ -395,7 +465,7 @@ document.addEventListener('DOMContentLoaded', function() {
     min-height: 100vh;
     padding: 2rem;
     margin: 0 auto;
-    max-width: 100%;
+    width: 47rem;
 }
 
 .registration-card {
@@ -409,7 +479,7 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .registration-card-header {
-    background: linear-gradient(135deg, #14a800 0%, #0d7a00 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     color: white;
     padding: 2rem;
     text-align: center;
@@ -440,7 +510,7 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .form-label i {
-    color: #14a800;
+    color: #4B9CD3;
 }
 
 .form-control {
@@ -453,8 +523,8 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .form-control:focus {
-    border-color: #14a800;
-    box-shadow: 0 0 0 3px rgba(20, 168, 0, 0.1);
+    border-color: #4B9CD3;
+    box-shadow: 0 0 0 3px rgba(75, 156, 211, 0.15);
     background: white;
 }
 
@@ -464,7 +534,7 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #14a800 0%, #0d7a00 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     border: none;
     border-radius: 10px;
     padding: 0.875rem 1.5rem;
@@ -475,7 +545,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(20, 168, 0, 0.3);
+    box-shadow: 0 10px 20px rgba(75, 156, 211, 0.35);
 }
 
 .registration-footer {
@@ -719,6 +789,9 @@ document.addEventListener('DOMContentLoaded', function() {
     .avatar-preview {
         width: 100px;
         height: 100px;
+    }
+    .iti__tel-input{
+        width: 34rem;
     }
 }
 </style>

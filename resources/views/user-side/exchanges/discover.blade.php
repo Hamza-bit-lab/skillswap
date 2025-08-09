@@ -11,7 +11,7 @@
         </div>
         
         <div class="discover-header-content">
-            <div class="container-fluid">
+            <div class="container">
                 <div class="row align-items-center">
                     <div class="col-lg-8">
                         <div class="header-content">
@@ -38,7 +38,7 @@
 
     <!-- Enhanced Search & Filter Section -->
     <div class="search-filter-section">
-        <div class="container-fluid">
+        <div class="container">
             <div class="search-filter-card">
                 <form action="{{ route('user.exchanges.discover') }}" method="GET" id="searchForm">
                     <!-- Enhanced Search Fields -->
@@ -191,7 +191,7 @@
 
     <!-- Skills Grid Section -->
     <div class="skills-grid-section">
-        <div class="container-fluid">
+        <div class="container">
             <!-- Results Header -->
             <div class="results-header">
                 <div class="row align-items-center">
@@ -370,14 +370,14 @@
 /* Discover Container */
 .discover-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     padding: 0;
 }
 
 /* Header Section */
 .discover-header-section {
     position: relative;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     padding: 60px 0 40px;
     margin-bottom: 30px;
 }
@@ -397,7 +397,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+    background: linear-gradient(135deg, rgba(75, 156, 211, 0.9) 0%, rgba(58, 123, 179, 0.9) 100%);
 }
 
 .discover-header-content {
@@ -476,7 +476,7 @@
 }
 
 .search-header h4 i {
-    color: #14a800;
+    color: #4B9CD3;
 }
 
 .search-header p {
@@ -495,8 +495,8 @@
 }
 
 .search-input:focus {
-    border-color: #14a800;
-    box-shadow: 0 0 0 4px rgba(20, 168, 0, 0.1);
+    border-color: #4B9CD3;
+    box-shadow: 0 0 0 4px rgba(75, 156, 211, 0.1);
     background: white;
     transform: translateY(-2px);
 }
@@ -524,7 +524,7 @@
 }
 
 .form-label i {
-    color: #667eea;
+    color: #4B9CD3;
     width: 16px;
 }
 
@@ -536,8 +536,8 @@
 }
 
 .form-control:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    border-color: #4B9CD3;
+    box-shadow: 0 0 0 0.2rem rgba(75, 156, 211, 0.25);
 }
 
 .btn {
@@ -548,13 +548,13 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     border: none;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8px 25px rgba(75, 156, 211, 0.3);
 }
 
 /* Skills Grid Section */
@@ -579,7 +579,7 @@
 }
 
 .results-title i {
-    color: #667eea;
+    color: #4B9CD3;
 }
 
 .results-count {
@@ -601,8 +601,8 @@
 /* Skills Grid */
 .skills-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
     margin-bottom: 40px;
 }
 
@@ -616,6 +616,8 @@
     position: relative;
     overflow: hidden;
     min-height: 320px;
+    display: flex;
+    flex-direction: column;
 }
 
 .skill-card.enhanced {
@@ -627,7 +629,7 @@
 .skill-card.enhanced:hover {
     transform: translateY(-8px);
     box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-    border-color: #14a800;
+    border-color: #4B9CD3;
 }
 
 .skill-card.enhanced::before {
@@ -637,7 +639,7 @@
     left: 0;
     right: 0;
     height: 5px;
-    background: linear-gradient(135deg, #14a800 0%, #0d7a00 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
 }
 
 .skill-card:hover {
@@ -652,7 +654,7 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
 }
 
 /* Skill Header */
@@ -689,7 +691,7 @@
     right: -2px;
     width: 20px;
     height: 20px;
-    background: #14a800;
+    background: #4B9CD3;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -707,7 +709,7 @@
 }
 
 .user-name {
-    color: #14a800;
+    color: #4B9CD3;
 }
 
 .user-rating {
@@ -729,7 +731,7 @@
 .user-rating .rating-text {
     font-size: 0.8rem;
     font-weight: 600;
-    color: #14a800;
+    color: #4B9CD3;
 }
 
 .user-location {
@@ -818,7 +820,7 @@
 }
 
 .skill-stats .stat-item i {
-    color: #14a800;
+    color: #4B9CD3;
     font-size: 1.2rem;
     margin-bottom: 5px;
 }
@@ -835,7 +837,7 @@
 }
 
 .skill-price {
-    background: linear-gradient(135deg, #14a800 0%, #0d7a00 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     color: white;
     padding: 12px 15px;
     border-radius: 10px;
@@ -886,12 +888,12 @@
 }
 
 .skill-tag:hover {
-    background: #14a800;
+    background: #4B9CD3;
     color: white;
 }
 
 .skill-tag.more {
-    background: #14a800;
+    background: #4B9CD3;
     color: white;
     font-style: italic;
 }
@@ -956,7 +958,8 @@
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
-    margin-top: 20px;
+    margin-top: auto;
+    padding-top: 20px;
 }
 
 .skill-actions .btn {
@@ -1005,19 +1008,19 @@
 .page-link {
     border-radius: 10px;
     border: 2px solid #e9ecef;
-    color: #667eea;
+    color: #4B9CD3;
     padding: 10px 15px;
     transition: all 0.3s ease;
 }
 
 .page-link:hover {
-    background: #667eea;
-    border-color: #667eea;
+    background: #4B9CD3;
+    border-color: #4B9CD3;
     color: #fff;
 }
 
 .page-item.active .page-link {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     border-color: transparent;
 }
 
@@ -1029,7 +1032,7 @@
 }
 
 .modal-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     color: #fff;
     border-radius: 15px 15px 0 0;
     border: none;

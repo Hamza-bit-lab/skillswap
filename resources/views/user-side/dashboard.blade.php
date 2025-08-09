@@ -5,7 +5,7 @@
 @section('content')
 
 @if(session('success'))
-    <div class="container-fluid mt-3">
+    <div class="container mt-3">
         <div class="alert alert-success alert-dismissible fade show floating-alert" role="alert">
             <i class="fa fa-check-circle mr-2"></i>
             {{ session('success') }}
@@ -25,7 +25,7 @@
         </div>
         
         <div class="dashboard-header-content">
-            <div class="container-fluid">
+            <div class="container">
                 <div class="row align-items-center">
                     <div class="col-md-8">
                         <div class="welcome-content">
@@ -39,6 +39,14 @@
                                 <span class="meta-item">
                                     <i class="fa fa-clock-o"></i>
                                     Last login {{ auth()->user()->last_active ? auth()->user()->last_active->diffForHumans() : 'Recently' }}
+                                </span>
+                                <span class="meta-item">
+                                    <i class="fa fa-users"></i>
+                                    {{ \App\Models\User::count() }} members online
+                                </span>
+                                <span class="meta-item">
+                                    <i class="fa fa-exchange"></i>
+                                    {{ \App\Models\Exchange::whereIn('status', ['pending', 'in_progress'])->count() }} active exchanges
                                 </span>
                             </div>
                         </div>
@@ -60,7 +68,7 @@
 
     <!-- Dashboard Stats -->
     <div class="dashboard-stats-section">
-        <div class="container-fluid">
+        <div class="container">
             <div class="row">
                 <div class="col-lg-3 col-md-6">
                     <div class="stat-card">
@@ -80,9 +88,9 @@
                             <i class="fa fa-clock-o"></i>
                         </div>
                         <div class="stat-content">
-                            <h3>2</h3>
+                            <h3>{{ auth()->user()->getAllExchanges()->whereIn('status', ['pending', 'in_progress'])->count() }}</h3>
                             <p>Active Exchanges</p>
-                            <small class="text-info">In progress</small>
+                            <small class="text-info">{{ auth()->user()->getAllExchanges()->where('status', 'pending')->count() }} pending</small>
                         </div>
                     </div>
                 </div>
@@ -108,9 +116,9 @@
                             <i class="fa fa-envelope"></i>
                         </div>
                         <div class="stat-content">
-                            <h3>5</h3>
+                            <h3>{{ \App\Models\Message::where('receiver_id', auth()->id())->where('is_read', false)->count() }}</h3>
                             <p>Unread Messages</p>
-                            <small class="text-primary">New conversations</small>
+                            <small class="text-primary">{{ \App\Models\Message::where('receiver_id', auth()->id())->count() }} total</small>
                         </div>
                     </div>
                 </div>
@@ -120,7 +128,7 @@
 
     <!-- Dashboard Main Content -->
     <div class="dashboard-main-content">
-        <div class="container-fluid">
+        <div class="container">
             <div class="row">
                 <!-- Main Content Area -->
                 <div class="col-lg-8">
@@ -217,6 +225,75 @@
                         </div>
                     </div>
 
+                    <!-- Analytics & Charts Section -->
+                    <div class="dashboard-section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <h3><i class="fa fa-chart-line"></i> Your Analytics</h3>
+                                <p class="section-subtitle">Performance insights and trends</p>
+                            </div>
+                        </div>
+                        
+                        <div class="analytics-grid">
+                            <!-- Exchange Status Chart -->
+                            <div class="chart-card">
+                                <h5><i class="fa fa-pie-chart"></i> Exchange Status</h5>
+                                <div class="chart-container">
+                                    <canvas id="exchangeStatusChart" width="300" height="200"></canvas>
+                                </div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <span class="legend-color" style="background: #28a745;"></span>
+                                        <span>Completed ({{ auth()->user()->getCompletedExchangesCount() }})</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="legend-color" style="background: #ffc107;"></span>
+                                        <span>Active ({{ auth()->user()->getAllExchanges()->whereIn('status', ['pending', 'in_progress'])->count() }})</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="legend-color" style="background: #dc3545;"></span>
+                                        <span>Cancelled ({{ auth()->user()->getAllExchanges()->where('status', 'cancelled')->count() }})</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Monthly Activity Chart -->
+                            <div class="chart-card">
+                                <h5><i class="fa fa-bar-chart"></i> Monthly Activity</h5>
+                                <div class="chart-container">
+                                    <canvas id="monthlyActivityChart" width="300" height="200"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Skill Performance -->
+                            <div class="chart-card">
+                                <h5><i class="fa fa-star"></i> Skill Performance</h5>
+                                <div class="skill-performance">
+                                    @php
+                                        $topSkills = auth()->user()->skills()->withCount('reviews')->orderBy('reviews_count', 'desc')->take(5)->get();
+                                    @endphp
+                                    @foreach($topSkills as $skill)
+                                    <div class="skill-performance-item">
+                                        <div class="skill-info">
+                                            <h6>{{ $skill->name }}</h6>
+                                            <span class="skill-category">{{ $skill->category }}</span>
+                                        </div>
+                                        <div class="skill-stats">
+                                            <div class="rating">
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    <i class="fa fa-star {{ $i <= $skill->getAverageRating() ? 'text-warning' : 'text-muted' }}"></i>
+                                                @endfor
+                                                <span class="rating-text">{{ number_format($skill->getAverageRating(), 1) }}</span>
+                                            </div>
+                                            <span class="reviews-count">{{ $skill->getReviewsCount() }} reviews</span>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Recent Messages Section -->
                     <div class="dashboard-section">
                         <div class="section-header">
@@ -230,58 +307,45 @@
                         </div>
                         
                         <div class="messages-list">
-                            <div class="message-card unread">
-                                <div class="message-avatar">
-                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User">
-                                    <div class="online-indicator"></div>
-                                </div>
-                                <div class="message-content">
-                                    <div class="message-header">
-                                        <h5>Sarah Johnson</h5>
-                                        <span class="message-time">2 hours ago</span>
+                            @php
+                                $recentMessages = \App\Models\Message::where('receiver_id', auth()->id())
+                                    ->with(['sender', 'exchange'])
+                                    ->orderBy('created_at', 'desc')
+                                    ->limit(3)
+                                    ->get();
+                            @endphp
+                            
+                            @forelse($recentMessages as $message)
+                                <div class="message-card {{ !$message->is_read ? 'unread' : '' }}">
+                                    <div class="message-avatar">
+                                        <img src="{{ $message->sender->avatar ? asset('storage/' . $message->sender->avatar) : asset('assets/images/default-avatar.jpg') }}" alt="{{ $message->sender->name }}">
+                                        @if($message->sender->last_active && $message->sender->last_active->diffInMinutes(now()) < 5)
+                                            <div class="online-indicator"></div>
+                                        @endif
                                     </div>
-                                    <p>Hi! I'm interested in your web development skills. Would you like to exchange for my logo design services?</p>
-                                    <div class="message-actions">
-                                        <button class="btn btn-sm btn-primary">Reply</button>
-                                        <button class="btn btn-sm btn-outline-secondary">View Profile</button>
+                                    <div class="message-content">
+                                        <div class="message-header">
+                                            <h5>{{ $message->sender->name }}</h5>
+                                            <span class="message-time">{{ $message->created_at->diffForHumans() }}</span>
+                                        </div>
+                                        <p>{{ Str::limit($message->message, 100) }}</p>
+                                        <div class="message-actions">
+                                            <a href="{{ route('user.messages') }}" class="btn btn-sm btn-primary">Reply</a>
+                                            <a href="{{ route('user.profile.public', $message->sender->username) }}" class="btn btn-sm btn-outline-secondary">View Profile</a>
+                                        </div>
                                     </div>
+                                    @if(!$message->is_read)
+                                        <div class="message-status">
+                                            <span class="unread-badge"></span>
+                                        </div>
+                                    @endif
                                 </div>
-                                <div class="message-status">
-                                    <span class="unread-badge"></span>
+                            @empty
+                                <div class="text-center py-4">
+                                    <i class="fa fa-envelope fa-2x text-muted mb-3"></i>
+                                    <p class="text-muted">No messages yet. Start connecting with other members!</p>
                                 </div>
-                            </div>
-
-                            <div class="message-card">
-                                <div class="message-avatar">
-                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User">
-                                </div>
-                                <div class="message-content">
-                                    <div class="message-header">
-                                        <h5>Mike Chen</h5>
-                                        <span class="message-time">1 day ago</span>
-                                    </div>
-                                    <p>Thanks for the great work on the website! The exchange was perfect.</p>
-                                    <div class="message-actions">
-                                        <button class="btn btn-sm btn-outline-primary">Reply</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="message-card">
-                                <div class="message-avatar">
-                                    <img src="https://randomuser.me/api/portraits/women/23.jpg" alt="User">
-                                </div>
-                                <div class="message-content">
-                                    <div class="message-header">
-                                        <h5>Maria Garcia</h5>
-                                        <span class="message-time">3 days ago</span>
-                                    </div>
-                                    <p>When can we start working on the content writing project?</p>
-                                    <div class="message-actions">
-                                        <button class="btn btn-sm btn-outline-primary">Reply</button>
-                                    </div>
-                                </div>
-                            </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>
@@ -356,49 +420,68 @@
                         </div>
                         
                         <div class="activity-list">
-                            <div class="activity-item">
-                                <div class="activity-icon">
-                                    <i class="fa fa-star"></i>
+                            @php
+                                $recentActivities = collect();
+                                
+                                // Add recent exchanges
+                                $recentExchanges = auth()->user()->getAllExchanges()->take(3);
+                                foreach($recentExchanges as $exchange) {
+                                    $recentActivities->push([
+                                        'type' => 'exchange',
+                                        'icon' => 'fa-exchange',
+                                        'title' => 'Exchange ' . ucfirst($exchange->status),
+                                        'description' => 'With ' . ($exchange->initiator_id === auth()->id() ? $exchange->participant->name : $exchange->initiator->name),
+                                        'time' => $exchange->created_at->diffForHumans(),
+                                        'color' => $exchange->status === 'completed' ? '#28a745' : ($exchange->status === 'in_progress' ? '#ffc107' : '#6c757d')
+                                    ]);
+                                }
+                                
+                                // Add recent reviews
+                                $recentReviews = auth()->user()->receivedReviews()->with('reviewer')->take(2)->get();
+                                foreach($recentReviews as $review) {
+                                    $recentActivities->push([
+                                        'type' => 'review',
+                                        'icon' => 'fa-star',
+                                        'title' => 'Received ' . $review->rating . '-star review',
+                                        'description' => 'From ' . $review->reviewer->name,
+                                        'time' => $review->created_at->diffForHumans(),
+                                        'color' => '#ffc107'
+                                    ]);
+                                }
+                                
+                                // Add recent skills
+                                $recentSkills = auth()->user()->skills()->latest()->take(2)->get();
+                                foreach($recentSkills as $skill) {
+                                    $recentActivities->push([
+                                        'type' => 'skill',
+                                        'icon' => 'fa-plus',
+                                        'title' => 'Added new skill',
+                                        'description' => $skill->name,
+                                        'time' => $skill->created_at->diffForHumans(),
+                                        'color' => '#4B9CD3'
+                                    ]);
+                                }
+                                
+                                $recentActivities = $recentActivities->sortByDesc('time')->take(5);
+                            @endphp
+                            
+                            @forelse($recentActivities as $activity)
+                                <div class="activity-item">
+                                    <div class="activity-icon" style="background: {{ $activity['color'] }};">
+                                        <i class="fa {{ $activity['icon'] }}"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <h6>{{ $activity['title'] }}</h6>
+                                        <p>{{ $activity['description'] }}</p>
+                                        <span class="activity-time">{{ $activity['time'] }}</span>
+                                    </div>
                                 </div>
-                                <div class="activity-content">
-                                    <h6>Received 5-star review</h6>
-                                    <p>From Sarah Johnson</p>
-                                    <span class="activity-time">2 hours ago</span>
+                            @empty
+                                <div class="text-center py-3">
+                                    <i class="fa fa-history fa-2x text-muted mb-2"></i>
+                                    <p class="text-muted">No recent activity</p>
                                 </div>
-                            </div>
-
-                            <div class="activity-item">
-                                <div class="activity-icon">
-                                    <i class="fa fa-exchange"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <h6>Started new exchange</h6>
-                                    <p>With Mike Chen</p>
-                                    <span class="activity-time">1 day ago</span>
-                                </div>
-                            </div>
-
-                            <div class="activity-item">
-                                <div class="activity-icon">
-                                    <i class="fa fa-check"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <h6>Completed exchange</h6>
-                                    <p>With Emma Davis</p>
-                                    <span class="activity-time">3 days ago</span>
-                                </div>
-                            </div>
-
-                            <div class="activity-item">
-                                <div class="activity-icon">
-                                    <i class="fa fa-plus"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <h6>Added new skill</h6>
-                                    <p>React Development</p>
-                                    <span class="activity-time">1 week ago</span>
-                                </div>
-                            </div>
+                            @endforelse
                         </div>
                     </div>
 
@@ -409,47 +492,39 @@
                         </div>
                         
                         <div class="skill-recommendations">
-                            <div class="skill-recommendation">
-                                <div class="skill-icon">
-                                    <i class="fa fa-code"></i>
-                                </div>
-                                <div class="skill-info">
-                                    <h5>Python Development</h5>
-                                    <p>High demand in your area</p>
-                                    <div class="skill-meta">
-                                        <span class="demand-badge high">High Demand</span>
+                            @php
+                                $popularSkills = \App\Models\Skill::select('category', \DB::raw('COUNT(*) as count'))
+                                    ->groupBy('category')
+                                    ->orderBy('count', 'desc')
+                                    ->take(3)
+                                    ->get();
+                                
+                                $userCategories = auth()->user()->skills()->pluck('category')->toArray();
+                                $recommendedCategories = $popularSkills->whereNotIn('category', $userCategories)->take(3);
+                            @endphp
+                            
+                            @forelse($recommendedCategories as $category)
+                                <div class="skill-recommendation">
+                                    <div class="skill-icon">
+                                        <i class="fa fa-{{ $category->category === 'Technology' ? 'code' : ($category->category === 'Design' ? 'paint-brush' : 'bullhorn') }}"></i>
                                     </div>
-                                </div>
-                                <button class="btn btn-sm btn-primary">Add</button>
-                            </div>
-
-                            <div class="skill-recommendation">
-                                <div class="skill-icon">
-                                    <i class="fa fa-paint-brush"></i>
-                                </div>
-                                <div class="skill-info">
-                                    <h5>UI/UX Design</h5>
-                                    <p>Matches your profile well</p>
-                                    <div class="skill-meta">
-                                        <span class="demand-badge medium">Medium Demand</span>
+                                    <div class="skill-info">
+                                        <h5>{{ $category->category }}</h5>
+                                        <p>{{ $category->count }} members offering this skill</p>
+                                        <div class="skill-meta">
+                                            <span class="demand-badge {{ $category->count > 10 ? 'high' : 'medium' }}">
+                                                {{ $category->count > 10 ? 'High' : 'Medium' }} Demand
+                                            </span>
+                                        </div>
                                     </div>
+                                    <a href="{{ route('user.exchanges.discover') }}?category={{ urlencode($category->category) }}" class="btn btn-sm btn-primary">Explore</a>
                                 </div>
-                                <button class="btn btn-sm btn-primary">Add</button>
-                            </div>
-
-                            <div class="skill-recommendation">
-                                <div class="skill-icon">
-                                    <i class="fa fa-bullhorn"></i>
+                            @empty
+                                <div class="text-center py-3">
+                                    <i class="fa fa-lightbulb fa-2x text-muted mb-2"></i>
+                                    <p class="text-muted">No recommendations available</p>
                                 </div>
-                                <div class="skill-info">
-                                    <h5>Digital Marketing</h5>
-                                    <p>Popular in your network</p>
-                                    <div class="skill-meta">
-                                        <span class="demand-badge high">High Demand</span>
-                                    </div>
-                                </div>
-                                <button class="btn btn-sm btn-primary">Add</button>
-                            </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>
@@ -462,14 +537,14 @@
 /* Dashboard Container */
 .dashboard-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #f8f9fa;
     padding: 0;
 }
 
 /* Header Section */
 .dashboard-header-section {
     position: relative;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     padding: 60px 0 40px;
     margin-bottom: 30px;
 }
@@ -489,7 +564,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+    background: linear-gradient(135deg, rgba(75, 156, 211, 0.9) 0%, rgba(58, 123, 179, 0.9) 100%);
 }
 
 .dashboard-header-content {
@@ -544,6 +619,7 @@
 /* Stats Section */
 .dashboard-stats-section {
     margin-bottom: 30px;
+    padding: 0 15px;
 }
 
 .stat-card {
@@ -554,7 +630,8 @@
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     transition: transform 0.3s ease;
     height: 100%;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid #e9ecef;
+    margin-bottom: 20px;
 }
 
 .stat-card:hover {
@@ -566,7 +643,7 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4B9CD3 0%, #3a7bb3 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -607,6 +684,7 @@
     background: #f8f9fa;
     min-height: 60vh;
     padding: 30px 0;
+    margin: 0 15px;
 }
 
 /* Dashboard Sections */
@@ -617,6 +695,7 @@
     margin-bottom: 30px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     border: 1px solid #e9ecef;
+    height: fit-content;
 }
 
 .section-header {
@@ -639,7 +718,7 @@
 }
 
 .section-title h3 i {
-    color: #667eea;
+    color: #4B9CD3;
 }
 
 .section-subtitle {
@@ -662,11 +741,13 @@
 }
 
 .exchange-card {
-    background: #f8f9fa;
+    background: #fff;
     border-radius: 12px;
     padding: 20px;
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #4B9CD3;
     transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    border: 1px solid #e9ecef;
 }
 
 .exchange-card:hover {
@@ -716,7 +797,7 @@
 }
 
 .exchange-arrow {
-    color: #667eea;
+    color: #4B9CD3;
     font-size: 18px;
 }
 
@@ -791,10 +872,11 @@
     align-items: flex-start;
     gap: 15px;
     padding: 20px;
-    background: #f8f9fa;
+    background: #fff;
     border-radius: 12px;
     transition: all 0.3s ease;
     border: 1px solid #e9ecef;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
 .message-card:hover {
@@ -804,7 +886,7 @@
 
 .message-card.unread {
     background: #fff;
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #4B9CD3;
 }
 
 .message-avatar {
@@ -881,7 +963,7 @@
 .unread-badge {
     width: 10px;
     height: 10px;
-    background: #667eea;
+    background: #4B9CD3;
     border-radius: 50%;
     display: block;
 }
@@ -898,16 +980,17 @@
     align-items: center;
     gap: 15px;
     padding: 15px;
-    background: #f8f9fa;
+    background: #fff;
     border-radius: 12px;
     text-decoration: none;
     color: #495057;
     transition: all 0.3s ease;
     border: 1px solid #e9ecef;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
 .action-card:hover {
-    background: #667eea;
+    background: #4B9CD3;
     color: #fff;
     text-decoration: none;
     transform: translateX(5px);
@@ -916,7 +999,7 @@
 .action-icon {
     width: 45px;
     height: 45px;
-    background: #667eea;
+    background: #4B9CD3;
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -928,7 +1011,7 @@
 
 .action-card:hover .action-icon {
     background: #fff;
-    color: #667eea;
+    color: #4B9CD3;
 }
 
 .action-content {
@@ -968,15 +1051,16 @@
     align-items: flex-start;
     gap: 12px;
     padding: 12px;
-    background: #f8f9fa;
+    background: #fff;
     border-radius: 10px;
     border: 1px solid #e9ecef;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
 .activity-icon {
     width: 35px;
     height: 35px;
-    background: #667eea;
+    background: #4B9CD3;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1004,6 +1088,118 @@
     color: #6c757d;
 }
 
+/* Analytics Grid */
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.chart-card {
+    background: #fff;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
+}
+
+.chart-card h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chart-card h5 i {
+    color: #4B9CD3;
+}
+
+.chart-container {
+    position: relative;
+    height: 200px;
+    margin-bottom: 15px;
+}
+
+.chart-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Skill Performance */
+.skill-performance {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.skill-performance-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+}
+
+.skill-info h6 {
+    margin: 0 0 3px 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.skill-category {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.skill-stats {
+    text-align: right;
+}
+
+.skill-stats .rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 3px;
+}
+
+.skill-stats .rating i {
+    font-size: 0.7rem;
+}
+
+.rating-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #4B9CD3;
+}
+
+.reviews-count {
+    font-size: 0.7rem;
+    color: #666;
+}
+
 /* Skill Recommendations */
 .skill-recommendations {
     display: flex;
@@ -1016,15 +1212,16 @@
     align-items: center;
     gap: 15px;
     padding: 15px;
-    background: #f8f9fa;
+    background: #fff;
     border-radius: 12px;
     border: 1px solid #e9ecef;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
 .skill-icon {
     width: 45px;
     height: 45px;
-    background: #667eea;
+    background: #4B9CD3;
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -1142,6 +1339,14 @@
     .message-status {
         align-self: flex-end;
     }
+    
+    .dashboard-stats-section {
+        padding: 0 10px;
+    }
+    
+    .dashboard-main-content {
+        margin: 0 10px;
+    }
 }
 
 @media (max-width: 576px) {
@@ -1151,6 +1356,7 @@
     
     .dashboard-main-content {
         padding: 20px 0;
+        margin: 0 5px;
     }
     
     .dashboard-section {
@@ -1174,6 +1380,125 @@
     .stat-content h3 {
         font-size: 1.5rem;
     }
+    
+    .dashboard-stats-section {
+        padding: 0 5px;
+    }
+}
+
+/* Analytics Responsive */
+@media (max-width: 768px) {
+    .analytics-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .chart-card {
+        padding: 20px;
+    }
+    
+    .skill-performance-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .skill-stats {
+        text-align: left;
+        width: 100%;
+    }
 }
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Charts
+    initializeCharts();
+});
+
+function initializeCharts() {
+    // Exchange Status Chart
+    const exchangeStatusCtx = document.getElementById('exchangeStatusChart');
+    if (exchangeStatusCtx) {
+        const completedCount = {{ auth()->user()->getCompletedExchangesCount() }};
+        const activeCount = {{ auth()->user()->getAllExchanges()->whereIn('status', ['pending', 'in_progress'])->count() }};
+        const cancelledCount = {{ auth()->user()->getAllExchanges()->where('status', 'cancelled')->count() }};
+        
+        new Chart(exchangeStatusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Completed', 'Active', 'Cancelled'],
+                datasets: [{
+                    data: [completedCount, activeCount, cancelledCount],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 0,
+                    cutout: '60%'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+
+    // Monthly Activity Chart
+    const monthlyActivityCtx = document.getElementById('monthlyActivityChart');
+    if (monthlyActivityCtx) {
+        @php
+            $monthlyData = [];
+            for ($i = 5; $i >= 0; $i--) {
+                $month = now()->subMonths($i);
+                $exchangesCount = auth()->user()->getAllExchanges()
+                    ->where('created_at', '>=', $month->startOfMonth())
+                    ->where('created_at', '<=', $month->endOfMonth())
+                    ->count();
+                $monthlyData[] = [
+                    'month' => $month->format('M'),
+                    'count' => $exchangesCount
+                ];
+            }
+        @endphp
+        
+        new Chart(monthlyActivityCtx, {
+            type: 'line',
+            data: {
+                labels: @json(array_column($monthlyData, 'month')),
+                datasets: [{
+                    label: 'Exchanges',
+                    data: @json(array_column($monthlyData, 'count')),
+                    borderColor: '#4B9CD3',
+                    backgroundColor: 'rgba(75, 156, 211, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+</script>
 @endsection 
