@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\RedirectController;
 use App\Http\Controllers\RegistrationWizardController;
 use App\Http\Controllers\OtpVerificationController;
+use App\Http\Controllers\PriceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +24,7 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-
+Route::get('/pricing', [PriceController::class, 'pricePage'])->name('pricing');
 
 // Guest Routes (Only accessible when NOT logged in)
 Route::middleware(['guest'])->group(function () {

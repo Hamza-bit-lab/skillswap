@@ -7,6 +7,7 @@ use App\Models\Exchange;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Carbon\Carbon;
 
 class SkillController extends Controller
 {
@@ -17,6 +18,9 @@ class SkillController extends Controller
     {
         $id = Crypt::decrypt($id);
         $skill = Skill::with(['user', 'reviews.reviewer', 'user.skills'])
+            ->whereHas('user', function ($query) {
+                $query->where('last_activity', '>=', Carbon::now()->subDays(15));
+            })
             ->findOrFail($id);
 
         // Get user's skills for potential exchange

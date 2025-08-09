@@ -36,7 +36,7 @@
                 <!-- Navigation Menu -->
                 <div class="navbar-nav ml-auto">
                     <a href="#how-it-works" class="nav-link">How It Works</a>
-                    <a href="#success-stories" class="nav-link">Success Stories</a>
+                    <a href="{{ route('pricing') }}" class="nav-link">Pricing</a>
                     <a href="#community" class="nav-link">Community</a>
                 </div>
                 

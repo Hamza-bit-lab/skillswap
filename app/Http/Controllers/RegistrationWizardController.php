@@ -190,6 +190,8 @@ class RegistrationWizardController extends Controller
             $userData['password'] = Hash::make($userData['password']);
             $userData['member_since'] = now();
             $userData['last_active'] = now();
+            $userData['is_pro'] = false; 
+            $userData['plan'] = 'free'; 
 
             // Merge additional data from other steps
             $userData['bio'] = $userData['bio'] ?? '';

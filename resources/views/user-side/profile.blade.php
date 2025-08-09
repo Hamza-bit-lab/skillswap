@@ -85,6 +85,16 @@
                 <!-- Left Sidebar -->
                 <div class="profile-sidebar">
                     <!-- About Section -->
+                     <div class="profile-section">
+                        <div class="card-header">
+                            <h3 class="section-title">
+                                <i class="fa-thin fa-wallet"></i> Plan
+                            </h3>
+                        </div>
+                        <div class="section-content">
+                            <p class="about-text">{{ ucfirst($user->plan) }}</p>
+                        </div>
+                    </div>
                     <div class="profile-section">
                         <div class="card-header">
                             <h3 class="section-title">
