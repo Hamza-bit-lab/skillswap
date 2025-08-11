@@ -6,7 +6,10 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\RedirectController;
 use App\Http\Controllers\RegistrationWizardController;
 use App\Http\Controllers\OtpVerificationController;
+use App\Http\Controllers\PlanController;
 use App\Http\Controllers\PriceController;
+use App\Http\Controllers\PaymentController;
+use App\Models\Plan;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,7 +27,9 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
+// Pricing page
 Route::get('/pricing', [PriceController::class, 'pricePage'])->name('pricing');
+Route::get('/price', [PriceController::class, 'pricePage'])->name('price');
 
 // Guest Routes (Only accessible when NOT logged in)
 Route::middleware(['guest'])->group(function () {
@@ -50,16 +55,6 @@ Route::middleware(['guest'])->group(function () {
 Route::post('logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])
     ->name('logout')
     ->middleware('auth');
-
-    
-
-// Password Reset Routes
-Route::middleware(['guest'])->group(function () {
-    Route::get('password/reset', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
-    Route::post('password/email', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
-    Route::get('password/reset/{token}', [App\Http\Controllers\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
-    Route::post('password/reset', [App\Http\Controllers\Auth\ResetPasswordController::class, 'reset'])->name('password.update');
-});
 
 // OTP Email Verification Routes
 Route::middleware('auth')->group(function () {
@@ -97,7 +92,6 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/{id}/reject', [App\Http\Controllers\ExchangeController::class, 'reject'])->name('user.exchanges.reject');
             Route::post('/{id}/complete', [App\Http\Controllers\ExchangeController::class, 'complete'])->name('user.exchanges.complete');
             Route::post('/{id}/cancel', [App\Http\Controllers\ExchangeController::class, 'cancel'])->name('user.exchanges.cancel');
-            Route::post('/{id}/message', [App\Http\Controllers\ExchangeController::class, 'sendMessage'])->name('user.exchanges.message');
             Route::post('/exchanges/{id}/mark-done', [App\Http\Controllers\ExchangeController::class, 'markAsDone'])->name('user.exchanges.mark-done');
             Route::get('/search', [App\Http\Controllers\ExchangeController::class, 'search'])->name('user.exchanges.search');
             
@@ -176,6 +170,11 @@ Route::middleware(['auth'])->group(function () {
         })->name('user.settings');
     });
 
+    // Payment routes
+    Route::post('/payment/initiate', [PaymentController::class, 'initiatePayment'])->name('payment.initiate');
+    Route::get('/payment/success/{transaction_id}', [PaymentController::class, 'success'])->name('payment.success');
+    Route::get('/payment/cancel/{transaction_id}', [PaymentController::class, 'cancel'])->name('payment.cancel');
+
     // Admin Routes
     Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -184,7 +183,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/exchanges', [App\Http\Controllers\AdminController::class, 'exchanges'])->name('admin.exchanges');
         Route::get('/reports', [App\Http\Controllers\AdminController::class, 'reports'])->name('admin.reports');
         Route::get('/settings', [App\Http\Controllers\AdminController::class, 'settings'])->name('admin.settings');
-        
+        // Plans management routes
+        Route::get('/plans', [App\Http\Controllers\PlanController::class, 'planPage'])->name('admin.plans');
+        Route::post('/plans-store', [PlanController::class, 'store'])->name('storePlan');
+        Route::get('/plans/edit/{id}', [PlanController::class, 'edit'])->name('admin.plans.edit');
+        Route::put('/plans/{id}', [PlanController::class, 'update'])->name('updatePlan');
+        Route::delete('/plans/{id}', [PlanController::class, 'destroy'])->name('admin.plans.destroy');
+
         // Skills management routes
         Route::get('/skills/{id}', [App\Http\Controllers\AdminController::class, 'getSkill'])->name('admin.skills.show');
         Route::post('/skills/{id}/approve', [App\Http\Controllers\AdminController::class, 'approveSkill'])->name('admin.skills.approve');
@@ -224,6 +229,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/reviews/export', [App\Http\Controllers\AdminController::class, 'exportReviews'])->name('admin.reviews.export');
     });
 });
+
+// PayPal webhook (no auth required, and exclude CSRF)
+Route::post('/payment/webhook', [PaymentController::class, 'webhook'])
+    ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
+    ->name('payment.webhook');
 
 // Redirect old routes to new structure
 Route::get('/home', function () {

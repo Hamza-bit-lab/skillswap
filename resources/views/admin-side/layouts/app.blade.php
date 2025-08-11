@@ -70,6 +70,13 @@
                         <span>Settings</span>
                     </a>
                 </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('admin.plans') }}" class="nav-link {{ request()->routeIs('admin.plans') ? 'active' : '' }}">
+                        <i class="fa fa-cog"></i>
+                        <span>Plans</span>
+                    </a>
+                </li>
             </ul>
         </nav>
     </div>
@@ -570,7 +577,7 @@
     }
     </style>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -597,4 +604,4 @@
     @yield('scripts')
 </body>
 
-</html> 
+</html>

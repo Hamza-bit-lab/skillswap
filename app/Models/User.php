@@ -40,6 +40,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'completed_exchanges',
         'member_since',
         'last_active',
+        'is_pro',
+        'plan',
+        'paypal_subscription_id',
+        'subscription_status',
+        'subscribed_at',
+        'current_period_end',
     ];
 
     /**
@@ -175,6 +181,16 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->initiatedExchanges()->where('status', 'completed')->count() + 
                $this->participatedExchanges()->where('status', 'completed')->count();
+    }
+
+    public function plan()
+    {
+        return $this->belongsTo(Plan::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
     }
 
     /**

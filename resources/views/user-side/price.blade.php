@@ -506,184 +506,81 @@ th {
             </div>
         </header>
 
+        @if(session('error'))
+            <div style="max-width: 900px; margin: 0 auto 20px; padding: 12px 16px; border-radius: 8px; background: #fdecea; color: #611a15; border: 1px solid #f5c6cb;">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if(session('success'))
+            <div style="max-width: 900px; margin: 0 auto 20px; padding: 12px 16px; border-radius: 8px; background: #e6ffed; color: #1b5e20; border: 1px solid #b7eb8f;">
+                {{ session('success') }}
+            </div>
+        @endif
+
         <div class="pricing-cards">
-            <!-- Basic Plan -->
-            <div class="card">
-                <div class="card-inner">
-                    <div class="card-front">
-                        <div class="card-content">
-                            <div class="card-header">
-                                <h2>Basic</h2>
-                                <div class="price">$0<span class="currency">/</span><span class="period">mo</span></div>
-                            </div>
-                            <ul class="features">
-                                <li>
-                                    <span class="feature-icon">✓</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">5 Projects</span>
-                                        <span class="feature-description">Perfect for small teams</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <span class="feature-icon">✓</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">10GB Storage</span>
-                                        <span class="feature-description">Enough for basic needs</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <span class="feature-icon">✓</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">Basic Support</span>
-                                        <span class="feature-description">Email support within 24h</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <span class="feature-icon">✓</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">Email Notifications</span>
-                                        <span class="feature-description">Stay updated with alerts</span>
-                                    </div>
-                                </li>
-                            </ul>
-                            <button class="select-plan">Choose Plan</button>
-                        </div>
-                    </div>
-                    <div class="card-back">
-                        <div class="card-content">
-                            <h3>Basic Plan</h3>
-                            <p>Ideal for small businesses and startup projects</p>
-                            <button class="select-plan">Get Started</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @php
+                $monthlyPlans = $prices->where('billing_period', 'monthly');
+                $yearlyPlans = $prices->where('billing_period', 'yearly');
+            @endphp
 
-            <!-- Pro Plan -->
-            <div class="card">
-                <div class="popular-badge">Most Popular</div>
-                <div class="card-inner">
-                    <div class="card-front">
-                        <div class="card-content">
-                            <div class="card-header">
-                                <h2>Pro</h2>
-                                <div class="price">$10<span class="currency">/</span><span class="period">mo</span></div>
+            @foreach($monthlyPlans as $plan)
+                <div class="card plan-card" data-billing="monthly">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-content">
+                                <div class="card-header">
+                                    <h2>{{ $plan->name }}</h2>
+                                    <div class="price">${{ rtrim(rtrim(number_format((float)$plan->price, 2, '.', ''), '0'), '.') }}<span class="currency">/</span><span class="period">mo</span></div>
+                                </div>
+                                <ul class="features">
+                                    <li>
+                                        <span class="feature-icon">✓</span>
+                                        <div class="feature-content">
+                                            <span class="feature-title">{{ $plan->name }} plan</span>
+                                            <span class="feature-description">Billed monthly</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <form action="{{ route('payment.initiate') }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <input type="hidden" name="plan_id" value="{{ $plan->id }}">
+                                    <button type="submit" class="select-plan">Subscribe Now</button>
+                                </form>
                             </div>
-                            <ul class="features">
-                                <li class="featured">
-                                    <span class="feature-icon">✓</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">20 Projects</span>
-                                        <span class="feature-description">Perfect for growing teams</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <span class="feature-icon">✓</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">50GB Storage</span>
-                                        <span class="feature-description">Advanced storage solutions</span>
-                                    </div>
-                                </li>
-                                <li class="featured">
-                                    <span class="feature-icon">✓</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">Priority Support</span>
-                                        <span class="feature-description">24/7 dedicated support</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <span class="feature-icon">✓</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">Advanced Analytics</span>
-                                        <span class="feature-description">Detailed insights and reports</span>
-                                    </div>
-                                </li>
-                                <li class="featured">
-                                    <span class="feature-icon">✓</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">API Access</span>
-                                        <span class="feature-description">Full API integration</span>
-                                    </div>
-                                </li>
-                            </ul>
-                            <button class="select-plan">Choose Plan</button>
-                        </div>
-                    </div>
-                    <div class="card-back">
-                        <div class="card-content">
-                            <h3>Pro Plan</h3>
-                            <p>Professional solutions for growing businesses</p>
-                            <button class="select-plan">Get Started</button>
                         </div>
                     </div>
                 </div>
-            </div>
+            @endforeach
 
-            <!-- Enterprise Plan -->
-            <div class="card">
-                <div class="card-inner">
-                    <div class="card-front">
-                        <div class="card-content">
-                            <div class="card-header">
-                                <h2>Enterprise</h2>
-                                <div class="price">$30<span class="currency">/</span><span class="period">mo</span></div>
+            @foreach($yearlyPlans as $plan)
+                <div class="card plan-card" data-billing="yearly" style="display:none;">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-content">
+                                <div class="card-header">
+                                    <h2>{{ $plan->name }}</h2>
+                                    <div class="price">${{ rtrim(rtrim(number_format((float)$plan->price, 2, '.', ''), '0'), '.') }}<span class="currency">/</span><span class="period">year</span></div>
+                                </div>
+                                <ul class="features">
+                                    <li>
+                                        <span class="feature-icon">✓</span>
+                                        <div class="feature-content">
+                                            <span class="feature-title">{{ $plan->name }} plan</span>
+                                            <span class="feature-description">Billed yearly</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <form action="{{ route('payment.initiate') }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <input type="hidden" name="plan_id" value="{{ $plan->id }}">
+                                    <button type="submit" class="select-plan">Subscribe Now</button>
+                                </form>
                             </div>
-                            <ul class="features">
-                                <li class="featured">
-                                    <span class="feature-icon">✓</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">Unlimited Projects</span>
-                                        <span class="feature-description">Scale without limits</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <span class="feature-icon">✓</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">200GB Storage</span>
-                                        <span class="feature-description">Enterprise-grade storage</span>
-                                    </div>
-                                </li>
-                                <li class="featured">
-                                    <span class="feature-icon">✓</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">24/7 Support</span>
-                                        <span class="feature-description">Dedicated support team</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <span class="feature-icon">✓</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">Custom Integrations</span>
-                                        <span class="feature-description">Tailored to your needs</span>
-                                    </div>
-                                </li>
-                                <li class="featured">
-                                    <span class="feature-icon">✓</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">Advanced Security</span>
-                                        <span class="feature-description">Enterprise-grade protection</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <span class="feature-icon">✓</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">Custom Training</span>
-                                        <span class="feature-description">Team onboarding included</span>
-                                    </div>
-                                </li>
-                            </ul>
-                            <button class="select-plan">Choose Plan</button>
-                        </div>
-                    </div>
-                    <div class="card-back">
-                        <div class="card-content">
-                            <h3>Enterprise Plan</h3>
-                            <p>Custom solutions for large organizations</p>
-                            <button class="select-plan">Get Started</button>
                         </div>
                     </div>
                 </div>
-            </div>
+            @endforeach
         </div>
 
         <section class="feature-comparison">
@@ -794,24 +691,22 @@ th {
 
     // Pricing toggle
     const toggle = document.querySelector('.switch input');
-    const prices = document.querySelectorAll('.price');
-    const periods = document.querySelectorAll('.period');
     const discount = document.querySelector('.discount');
+    const planCards = document.querySelectorAll('.plan-card');
 
-    const monthlyPrices = ['$0', '$10', '$30'];
-    const yearlyPrices = ['$0', '$99', '$299'];
-
-    toggle.addEventListener('change', () => {
-        prices.forEach((price, index) => {
-            price.textContent = toggle.checked ? yearlyPrices[index] : monthlyPrices[index];
+    function applyBillingToggle() {
+        const showYearly = toggle.checked;
+        planCards.forEach(card => {
+            const isYearly = card.dataset.billing === 'yearly';
+            card.style.display = (showYearly && isYearly) || (!showYearly && !isYearly) ? '' : 'none';
         });
+        if (discount) {
+            discount.style.display = showYearly ? 'inline-block' : 'none';
+        }
+    }
 
-        periods.forEach(period => {
-            period.textContent = toggle.checked ? '/year' : '/mo';
-        });
-
-        discount.style.display = toggle.checked ? 'inline-block' : 'none';
-    });
+    toggle.addEventListener('change', applyBillingToggle);
+    applyBillingToggle();
 
     // FAQ Accordion
     const faqItems = document.querySelectorAll('.faq-item');
