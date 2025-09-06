@@ -26,12 +26,7 @@ class PaymentController extends Controller
         $plan = Plan::findOrFail($request->plan_id);
         $user = auth()->user();
 
-        Log::info('Payment initiation started', [
-            'user_id' => $user->id,
-            'plan_id' => $plan->id,
-            'plan_name' => $plan->name,
-            'amount' => $plan->price
-        ]);
+
 
         try {
             // Create or get PayPal product and plan
@@ -79,10 +74,7 @@ class PaymentController extends Controller
                 'paypal_response' => $subscription
             ]);
 
-            Log::info('PayPal subscription created', [
-                'transaction_id' => $transaction->id,
-                'subscription_id' => $subscription['id']
-            ]);
+
 
             // Redirect to PayPal
             $approvalUrl = null;
@@ -102,11 +94,6 @@ class PaymentController extends Controller
             throw new \Exception('PayPal approval URL not found');
 
         } catch (\Exception $e) {
-            Log::error('Payment initiation failed', [
-                'user_id' => $user->id,
-                'plan_id' => $plan->id,
-                'error' => $e->getMessage()
-            ]);
 
             return redirect()->route('price')->with('error', 'Payment initiation failed. Please try again.');
         }
@@ -147,10 +134,6 @@ class PaymentController extends Controller
             return redirect()->route('user.dashboard')->with('success', 'Payment successful! Your subscription is now active.');
 
         } catch (\Exception $e) {
-            Log::error('Payment success processing failed', [
-                'transaction_id' => $transaction->id,
-                'error' => $e->getMessage()
-            ]);
 
             return redirect()->route('dashboard')->with('error', 'Payment verification failed. Please contact support.');
         }
@@ -176,14 +159,11 @@ class PaymentController extends Controller
 
         // Verify webhook signature
         if (!$this->paypalService->verifyWebhookSignature($headers, $body)) {
-            Log::warning('PayPal webhook signature verification failed');
             return response('Unauthorized', 401);
         }
 
         $event = $request->all();
         $eventType = $event['event_type'] ?? '';
-
-        Log::info('PayPal webhook received', ['event_type' => $eventType]);
 
         try {
             switch ($eventType) {
@@ -203,16 +183,11 @@ class PaymentController extends Controller
                     $this->handlePaymentCompleted($event);
                     break;
                 default:
-                    Log::info('Unhandled PayPal webhook event', ['event_type' => $eventType]);
             }
 
             return response('OK', 200);
 
         } catch (\Exception $e) {
-            Log::error('PayPal webhook processing failed', [
-                'event_type' => $eventType,
-                'error' => $e->getMessage()
-            ]);
 
             return response('Internal Server Error', 500);
         }
@@ -237,10 +212,7 @@ class PaymentController extends Controller
                 'current_period_end' => $this->calculatePeriodEnd($transaction->billing_period)
             ]);
             
-            Log::info('User subscription created via webhook', [
-                'user_id' => $user->id,
-                'subscription_id' => $subscriptionId
-            ]);
+
         }
     }
 
@@ -263,10 +235,7 @@ class PaymentController extends Controller
                 'current_period_end' => $this->calculatePeriodEnd($transaction->billing_period)
             ]);
             
-            Log::info('User subscription activated via webhook', [
-                'user_id' => $user->id,
-                'subscription_id' => $subscriptionId
-            ]);
+
         }
     }
 

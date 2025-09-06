@@ -157,13 +157,7 @@ class AdminController extends Controller
             
             $categories = Skill::distinct()->pluck('category')->toArray();
             
-            // Log for debugging
-            \Log::info('Admin exchanges page accessed', [
-                'totalExchanges' => $totalExchanges,
-                'activeExchanges' => $activeExchanges,
-                'completedExchanges' => $completedExchanges,
-                'cancelledExchanges' => $cancelledExchanges
-            ]);
+
             
             return view('admin-side.exchanges', compact(
                 'exchanges',
@@ -174,7 +168,6 @@ class AdminController extends Controller
                 'categories'
             ));
         } catch (\Exception $e) {
-            \Log::error('Error in admin exchanges: ' . $e->getMessage());
             return back()->with('error', 'An error occurred while loading exchanges: ' . $e->getMessage());
         }
     }
@@ -687,13 +680,7 @@ class AdminController extends Controller
             $approvedReviews = Review::where('is_approved', true)->count();
             $rejectedReviews = Review::where('is_rejected', true)->count();
             
-            // Log for debugging
-            \Log::info('Admin reviews page accessed', [
-                'totalReviews' => $totalReviews,
-                'pendingReviews' => $pendingReviews,
-                'approvedReviews' => $approvedReviews,
-                'rejectedReviews' => $rejectedReviews
-            ]);
+
             
             return view('admin-side.reviews', compact(
                 'reviews',
@@ -703,7 +690,6 @@ class AdminController extends Controller
                 'rejectedReviews'
             ));
         } catch (\Exception $e) {
-            \Log::error('Error in admin reviews: ' . $e->getMessage());
             return back()->with('error', 'An error occurred while loading reviews: ' . $e->getMessage());
         }
     }
@@ -724,7 +710,6 @@ class AdminController extends Controller
                 'html' => $html
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error getting review details: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error loading review details'
@@ -836,5 +821,9 @@ class AdminController extends Controller
         };
         
         return response()->stream($callback, 200, $headers);
+    }
+
+    public function nav(){
+        return view('navbar');
     }
 } 

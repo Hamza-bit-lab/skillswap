@@ -25,16 +25,9 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-        Log::info('LoginController@authenticated: Processing post-login redirect', [
-            'user_id' => $user->id,
-            'is_admin' => $user->isAdmin(),
-        ]);
-
         if ($user->isAdmin()) {
-            Log::info('LoginController: Redirecting admin to admin.dashboard');
             return redirect()->route('admin.dashboard');
         } else {
-            Log::info('LoginController: Redirecting non-admin to user.dashboard');
             return redirect()->route('user.dashboard');
         }
     }

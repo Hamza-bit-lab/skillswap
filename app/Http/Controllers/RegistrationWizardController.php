@@ -253,8 +253,7 @@ class RegistrationWizardController extends Controller
                         ->subject('Welcome to SkillSwap - Verify Your Email');
             });
         } catch (\Exception $e) {
-            // Log error but don't fail registration
-            Log::error('Failed to send welcome OTP: ' . $e->getMessage());
+            // Don't fail registration
         }
     }
 

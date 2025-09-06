@@ -123,7 +123,7 @@ class OtpVerificationController extends Controller
         Session::forget('otp');
 
         // Log the successful verification
-        \Log::info('Email verified successfully for user: ' . $user->email);
+
 
         return redirect()->route('user.dashboard')->with('success', 'Email verified successfully! Welcome to SkillSwap!');
     }

@@ -19,7 +19,7 @@ class SkillController extends Controller
         $id = Crypt::decrypt($id);
         $skill = Skill::with(['user', 'reviews.reviewer', 'user.skills'])
             ->whereHas('user', function ($query) {
-                $query->where('last_activity', '>=', Carbon::now()->subDays(15));
+                $query->where('last_active', '>=', Carbon::now()->subDays(15));
             })
             ->findOrFail($id);
 

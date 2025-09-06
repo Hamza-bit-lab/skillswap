@@ -42,7 +42,6 @@ class PayPalService
             return $this->accessToken;
         }
 
-        Log::error('PayPal access token failed', $response->json());
         throw new \Exception('Failed to get PayPal access token');
     }
 
@@ -62,7 +61,6 @@ class PayPalService
             return $response->json('id');
         }
 
-        Log::error('PayPal create product failed', $response->json());
         throw new \Exception('Failed to create PayPal product');
     }
 
@@ -110,7 +108,6 @@ class PayPalService
             return $response->json('id');
         }
 
-        Log::error('PayPal create plan failed', $response->json());
         throw new \Exception('Failed to create PayPal plan');
     }
 
@@ -148,7 +145,6 @@ class PayPalService
             return $response->json();
         }
 
-        Log::error('PayPal create subscription failed', $response->json());
         throw new \Exception('Failed to create PayPal subscription');
     }
 
@@ -162,7 +158,6 @@ class PayPalService
             return $response->json();
         }
 
-        Log::error('PayPal get subscription failed', $response->json());
         throw new \Exception('Failed to get PayPal subscription');
     }
 

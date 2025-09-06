@@ -152,15 +152,6 @@ class ProfileController extends Controller
                 'message' => 'Validation failed: ' . implode(', ', $e->validator->errors()->all()),
             ], 422);
         } catch (\Exception $e) {
-            \Log::error('Avatar upload failed: ' . $e->getMessage(), [
-                'user_id' => Auth::id(),
-                'file_info' => $request->hasFile('avatar') ? [
-                    'name' => $request->file('avatar')->getClientOriginalName(),
-                    'size' => $request->file('avatar')->getSize(),
-                    'mime' => $request->file('avatar')->getMimeType(),
-                ] : 'No file'
-            ]);
-            
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update avatar: ' . $e->getMessage(),

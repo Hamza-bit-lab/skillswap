@@ -246,3 +246,6 @@ Route::get('/user/home', function () {
 
 // User profile (public, by username)
 Route::get('/profile/{user:username}', [App\Http\Controllers\ProfileController::class, 'showPublic'])->name('user.profile.public');
+
+
+Route::get('/navbar', [App\Http\Controllers\AdminController::class, 'nav'])->name('navbar');

@@ -22,10 +22,7 @@ class AdminMiddleware
             return $next($request);
         }
 
-        Log::warning('Non-admin attempted to access admin route', [
-            'user_id' => Auth::id() ?? 'guest',
-            'path' => $request->path()
-        ]);
+
 
         return redirect()->route('user.dashboard');
     }
